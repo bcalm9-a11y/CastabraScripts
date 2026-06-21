@@ -1,0 +1,346 @@
+start
+state: targeting(on)
+node: 32352, 32224, 8
+restart bps: 5801
+wait: 1000
+reach depot:
+wait: 1000
+deposit items: {8402}, 3381, 3079, 8918, 5898, 3032, 3048, 3324, 3065,
+wait: 1000
+deposit items: {8403}, 8345
+withdraw
+restart bps: 5801
+node: 32350, 32224, 8
+goto: start, item(7368) < 300
+stand: 32348, 32231, 8
+node: 32348, 32224, 7
+stand: 32348, 32224, 7
+goto: start, distance(32348, 32224, 7) > 2
+bank
+node: 32347, 32222, 7
+lua: local w = Self.Weapon() local n = Self.ItemCount(7368) + ((w and w.id == 7368) and w.count or 0) if n < 400 then Walker.Enabled(false) Self.Logout() end
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32341, 32221, 7
+node: 32338, 32225, 7
+node: 32338, 32229, 7
+node: 32338, 32233, 7
+node: 32333, 32237, 7
+node: 32327, 32240, 7
+node: 32326, 32244, 7
+lua: Walker.SettingsChange("re walk delay", 1000)
+node: 32321, 32248, 7
+node: 32319, 32252, 7
+door: 32319, 32253, 7
+node: 32319, 32256, 7
+stand: 32319, 32256, 7
+wait: 500
+say: hi
+wait: 500
+say: deposit all
+wait: 500
+say: yes
+wait: 500
+say: bye
+wait: 500
+say: instant withdraw 40000
+wait: 500
+door: 32319, 32253, 7
+node: 32319, 32252, 7
+stand: 32319, 32250, 7
+wait: 500
+lua: Walker.SettingsChange("re walk delay", 100)
+wait: 500
+goto: bank, distance(32319, 32250, 7) > 2
+manas
+node: 32319, 32248, 7
+node: 32333, 32248, 7
+node: 32339, 32248, 7
+node: 32344, 32249, 7
+node: 32350, 32250, 7
+node: 32357, 32250, 7
+node: 32364, 32250, 7
+node: 32369, 32251, 7
+node: 32375, 32251, 7
+node: 32382, 32251, 7
+node: 32386, 32252, 7
+node: 32389, 32246, 7
+node: 32391, 32237, 7
+node: 32386, 32228, 7
+node: 32386, 32228, 7
+node: 32386, 32218, 7
+node: 32388, 32214, 7
+node: 32401, 32214, 7
+node: 32411, 32214, 7
+node: 32426, 32211, 7
+node: 32426, 32194, 7
+node: 32418, 32183, 7
+node: 32410, 32181, 7
+lua: Walker.SettingsChange("re walk delay", 800)
+node: 32412, 32172, 7
+stand: 32413, 32171, 7
+lua: local current = Self.ItemCount(8309); local needed = 600 - current; if needed > 0 then Self.Say("instant buy " .. needed .. " mana fluid"); end
+stand: 32412, 32172, 7
+goto: manas, distance(32412, 32172, 7) > 2
+goto: manas, item(8309) < 125
+tospawn
+lua: Walker.SettingsChange("re walk delay", 200)
+node: 32411, 32176, 7
+node: 32410, 32180, 7
+node: 32404, 32181, 7
+node: 32398, 32182, 7
+node: 32392, 32182, 7
+node: 32386, 32182, 7
+node: 32380, 32182, 7
+node: 32374, 32182, 7
+node: 32368, 32182, 7
+node: 32367, 32186, 7
+node: 32361, 32187, 7
+node: 32355, 32187, 7
+node: 32349, 32189, 7
+node: 32343, 32189, 7
+node: 32337, 32189, 7
+node: 32331, 32189, 7
+node: 32325, 32189, 7
+node: 32319, 32189, 7
+lua: Walker.SettingsChange("re walk delay", 1600)
+node: 32313, 32189, 7
+door: 32310, 32188, 7
+node: 32307, 32188, 7
+stand: 32304, 32190, 7
+door: 32304, 32191, 7
+node: 32304, 32192, 7
+node: 32310, 32194, 7
+node: 32316, 32194, 7
+stand: 32319, 32192, 7
+node: 32319, 32192, 8
+node: 32313, 32195, 8
+stand: 32312, 32194, 8
+node: 32312, 32194, 9
+node: 32318, 32197, 9
+lua: Walker.SettingsChange("re walk delay", 800)
+node: 32324, 32197, 9
+node: 32330, 32197, 9
+node: 32336, 32197, 9
+node: 32339, 32201, 9
+node: 32339, 32205, 9
+node: 32345, 32205, 9
+node: 32346, 32209, 9
+node: 32346, 32213, 9
+node: 32348, 32217, 9
+node: 32346, 32221, 9
+node: 32352, 32223, 9
+wait: 1000
+say: buu
+wait:  700
+node: 32352, 32227, 9
+node: 32358, 32229, 9
+lua: Targeting.setAttackMode("follow")
+say: utana vid
+node: 32364, 32230, 9
+node: 32369, 32234, 9
+node: 32369, 32238, 9
+node: 32369, 32242, 9
+stand: 32371, 32242, 9
+state: targeting(if stuck)
+node: 32371, 32242, 10
+node: 32377, 32242, 10
+node: 32383, 32241, 10
+node: 32385, 32237, 10
+node: 32391, 32235, 10
+node: 32397, 32232, 10
+node: 32403, 32232, 10
+node: 32409, 32232, 10
+stand: 32409, 32232, 10
+goto: tospawn, distance(32409, 32232, 10) > 2
+lever
+node: 32415, 32232, 10
+stand: 32415, 32231, 10
+goto: pull, distance(32415, 32231, 10) > 2
+goto: spawn
+pull
+node: 32409, 32231, 10
+node: 32403, 32231, 10
+node: 32397, 32231, 10
+node: 32391, 32234, 10
+node: 32385, 32237, 10
+node: 32385, 32241, 10
+node: 32385, 32245, 10
+node: 32387, 32249, 10
+node: 32393, 32251, 10
+node: 32398, 32255, 10
+node: 32404, 32255, 10
+node: 32410, 32253, 10
+stand: 32414, 32252, 10
+goto: pull, distance(32414, 32252, 10) > 2
+stand: 32414, 32253, 10
+lua: Map.UseItem(32414, 32252, 10)
+wait: 1000
+node: 32404, 32253, 10
+node: 32398, 32255, 10
+node: 32394, 32251, 10
+node: 32388, 32250, 10
+node: 32386, 32246, 10
+node: 32387, 32242, 10
+node: 32387, 32238, 10
+node: 32389, 32234, 10
+node: 32395, 32233, 10
+node: 32401, 32231, 10
+node: 32407, 32232, 10
+node: 32413, 32231, 10
+stand: 32415, 32231, 10
+goto: pull, distance(32415, 32231, 10) > 2
+spawn
+stand: 32413, 32231, 10
+lua: Map.UseItem(32413, 32230, 10)
+wait:1000
+node: 32419, 32231, 10
+node: 32422, 32235, 10
+node: 32428, 32235, 10
+node: 32430, 32231, 10
+node: 32432, 32227, 10
+node: 32438, 32225, 10
+node: 32444, 32228, 10
+node: 32445, 32232, 10
+node: 32445, 32236, 10
+node: 32445, 32240, 10
+node: 32451, 32243, 10
+stand: 32453, 32243, 10
+node: 32453, 32243, 11
+node: 32459, 32241, 11
+node: 32465, 32240, 11
+node: 32471, 32240, 11
+stand: 32473, 32240, 11
+node: 32474, 32240, 12
+goto: back, item(8309) < 125
+goto: start, item(7368) < 125
+stand: 32475, 32239, 12
+goto: spawn, distance(32475, 32239, 12) > 2
+state: targeting(on)
+Targeting.setAttackMode("none")
+hunt
+node: 32482, 32239, 12
+node: 32476, 32236, 12
+node: 32466, 32237, 12
+node: 32461, 32238, 12
+wait: 2000
+node: 32457, 32236, 12
+node: 32449, 32235, 12
+node: 32437, 32233, 12
+node: 32432, 32237, 12
+node: 32425, 32237, 12
+node: 32419, 32239, 12
+node: 32417, 32243, 12
+node: 32416, 32246, 12
+node: 32424, 32249, 12
+node: 32425, 32239, 12
+node: 32440, 32234, 12
+node: 32442, 32233, 12
+wait: 3000
+node: 32451, 32237, 12
+node: 32462, 32243, 12
+node: 32467, 32250, 12
+node: 32470, 32253, 12
+wait: 1000
+node: 32464, 32247, 12
+node: 32468, 32237, 12
+node: 32472, 32237, 12
+goto: back, item(8309) < 140
+goto: back, item(7368) < 100
+goto: hunt
+back
+stand: 32473, 32239, 12
+Targeting.setAttackMode("follow")
+node: 32467, 32240, 11
+node: 32461, 32240, 11
+node: 32455, 32242, 11
+ladder: 32453, 32243, 11
+node: 32453, 32244, 10
+node: 32447, 32243, 10
+node: 32443, 32239, 10
+node: 32444, 32235, 10
+node: 32445, 32231, 10
+node: 32443, 32227, 10
+node: 32437, 32225, 10
+node: 32431, 32227, 10
+node: 32430, 32231, 10
+node: 32427, 32235, 10
+node: 32422, 32231, 10
+node: 32416, 32231, 10
+stand: 32414, 32231, 10
+goto: back, distance(32414, 32231, 10) > 2
+west
+stand: 32413, 32231, 10
+lua: Map.UseItem(32413, 32230, 10)
+wait: 1000
+stand: 32407, 32231, 10
+goto: west, distance(32407, 32231, 10) > 2
+town
+state: targeting(if stuck)
+node: 32402, 32232, 10
+say: utana vid
+node: 32396, 32232, 10
+node: 32390, 32234, 10
+node: 32387, 32238, 10
+node: 32382, 32242, 10
+node: 32376, 32242, 10
+rope: 32371, 32242, 10
+state: targeting(on)
+node: 32369, 32239, 9
+node: 32369, 32235, 9
+node: 32369, 32231, 9
+node: 32363, 32230, 9
+node: 32357, 32229, 9
+node: 32352, 32225, 9
+node: 32346, 32222, 9
+wait: 1000
+say: buu
+wait: 1000
+node: 32346, 32218, 9
+node: 32348, 32214, 9
+node: 32346, 32210, 9
+node: 32346, 32206, 9
+node: 32340, 32205, 9
+node: 32339, 32201, 9
+node: 32336, 32197, 9
+node: 32330, 32197, 9
+node: 32324, 32197, 9
+node: 32318, 32197, 9
+node: 32312, 32195, 9
+ladder: 32312, 32194, 9
+node: 32312, 32195, 8
+node: 32318, 32195, 8
+ladder: 32319, 32192, 8
+node: 32319, 32193, 7
+node: 32313, 32194, 7
+node: 32307, 32194, 7
+door: 32304, 32191, 7
+node: 32304, 32190, 7
+node: 32310, 32188, 7
+door: 32310, 32188, 7
+node: 32316, 32188, 7
+node: 32322, 32188, 7
+node: 32328, 32190, 7
+node: 32334, 32190, 7
+node: 32340, 32190, 7
+node: 32346, 32190, 7
+node: 32352, 32190, 7
+node: 32358, 32190, 7
+node: 32364, 32190, 7
+node: 32368, 32194, 7
+node: 32368, 32198, 7
+node: 32368, 32202, 7
+node: 32368, 32206, 7
+node: 32368, 32210, 7
+node: 32366, 32214, 7
+node: 32360, 32215, 7
+node: 32354, 32215, 7
+node: 32348, 32215, 7
+node: 32345, 32219, 7
+node: 32346, 32223, 7
+node: 32347, 32227, 7
+stand: 32347, 32231, 7
+node: 32347, 32231, 7
+node: 32347, 32232, 8
+node: 32346, 32228, 8
+stand: 32347, 32226, 8
+goto: town, distance(32347, 32226, 8) > 2
