@@ -17,16 +17,21 @@ node: 32348, 32224, 7
 stand: 32348, 32224, 7
 goto: start, distance(32348, 32224, 7) > 2
 bank
-node: 32347, 32222, 7
-lua: local w = Self.Weapon() local n = Self.ItemCount(7368) + ((w and w.id == 7368) and w.count or 0) if n < 400 then Walker.Enabled(false) Self.Logout() end
+node: 32342, 32222, 7
+lua: if Self.ItemCount(7368) < 300 then Walker.Enabled(false) Self.Logout() end
 lua: Walker.SettingsChange("re walk delay", 100)
-node: 32341, 32221, 7
-node: 32338, 32225, 7
-node: 32338, 32229, 7
-node: 32338, 32233, 7
-node: 32333, 32237, 7
-node: 32327, 32240, 7
-node: 32326, 32244, 7
+node: 32336, 32218, 7
+node: 32330, 32218, 7
+node: 32324, 32220, 7
+node: 32323, 32224, 7
+node: 32317, 32227, 7
+node: 32311, 32227, 7
+node: 32306, 32231, 7
+node: 32306, 32235, 7
+node: 32310, 32239, 7
+node: 32310, 32243, 7
+node: 32310, 32247, 7
+node: 32316, 32248, 7
 lua: Walker.SettingsChange("re walk delay", 1000)
 node: 32321, 32248, 7
 node: 32319, 32252, 7
@@ -52,29 +57,44 @@ lua: Walker.SettingsChange("re walk delay", 100)
 wait: 500
 goto: bank, distance(32319, 32250, 7) > 2
 manas
-node: 32319, 32248, 7
-node: 32333, 32248, 7
-node: 32339, 32248, 7
-node: 32344, 32249, 7
-node: 32350, 32250, 7
-node: 32357, 32250, 7
-node: 32364, 32250, 7
-node: 32369, 32251, 7
-node: 32375, 32251, 7
-node: 32382, 32251, 7
-node: 32386, 32252, 7
-node: 32389, 32246, 7
-node: 32391, 32237, 7
-node: 32386, 32228, 7
-node: 32386, 32228, 7
-node: 32386, 32218, 7
-node: 32388, 32214, 7
-node: 32401, 32214, 7
-node: 32411, 32214, 7
-node: 32426, 32211, 7
-node: 32426, 32194, 7
-node: 32418, 32183, 7
-node: 32410, 32181, 7
+node: 32319, 32250, 7
+node: 32325, 32249, 7
+node: 32331, 32249, 7
+node: 32337, 32249, 7
+node: 32343, 32251, 7
+node: 32349, 32251, 7
+node: 32355, 32251, 7
+node: 32361, 32251, 7
+node: 32367, 32251, 7
+node: 32373, 32251, 7
+node: 32379, 32251, 7
+node: 32385, 32251, 7
+node: 32389, 32255, 7
+node: 32395, 32255, 7
+node: 32401, 32255, 7
+node: 32407, 32255, 7
+node: 32413, 32255, 7
+node: 32419, 32255, 7
+node: 32424, 32251, 7
+node: 32425, 32247, 7
+node: 32425, 32243, 7
+node: 32425, 32239, 7
+node: 32425, 32235, 7
+node: 32425, 32231, 7
+node: 32425, 32227, 7
+node: 32425, 32223, 7
+node: 32425, 32219, 7
+node: 32425, 32215, 7
+node: 32425, 32211, 7
+node: 32425, 32207, 7
+node: 32426, 32203, 7
+node: 32426, 32199, 7
+node: 32426, 32195, 7
+node: 32426, 32191, 7
+node: 32426, 32187, 7
+node: 32426, 32183, 7
+node: 32420, 32183, 7
+node: 32414, 32183, 7
 lua: Walker.SettingsChange("re walk delay", 800)
 node: 32412, 32172, 7
 stand: 32413, 32171, 7
