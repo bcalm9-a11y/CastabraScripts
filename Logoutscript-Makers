@@ -1,0 +1,69 @@
+--[[ LEVEL 8 BLOCKER (identical copy on Kazey AND Jessesgotagun)
+     
+HELP only when ATTACKED (HP drops) -- ignores players just appearing
+one HELP per event (alert_cooldown)
+Casey says "buu" in default chat (0): log out 10s then relog ]]
+local config = {
+    help_text      = "ALERT ALERT",
+    relay_to       = "Nigel the Nigerian",
+    passer         = "Casey",
+    buu_word       = "buu",
+    buu_channel    = 0,
+    relogin_after  = 10,        -- stay logged out 10s so Casey can pass
+    alertcooldown = 30,        -- one HELP per PK event (seconds)
+    debug          = true
+}
+local helpTime, relog, logTime = 0, false, 0
+local lastHp = -1
+
+function blockerProxy(messages)
+    for , msg in ipairs(messages) do
+        if msg.channel == config.buu_channel
+        and string.lower(tostring(msg.speaker))  == string.lower(config.passer)
+        and string.lower(tostring(msg.message)) == config.buu_word then
+            relog = true
+            printf("[BLOCKER] buu -> logging out for passthrough")
+            return
+        end
+    end
+end
+Proxy.New("blockerProxy")
+
+Module.New("Lvl8 Blocker", function()
+    -- buu logout / relog state machine
+    if relog then
+        if Self.isConnected() then
+            if logTime == 0 then
+                Self.Logout()
+            else
+                relog, logTime = false, 0
+                printf("[BLOCKER] back online after buu")
+            end
+        else
+            if logTime == 0 then
+                logTime = os.clock()
+                printf("[BLOCKER] logged out; relog in " .. config.relogin_after .. "s")
+            elseif os.clock() - logTime > config.relogin_after then
+                Rifbot.PressKey(13, 2000)
+            end
+        end
+        wait(200)
+        return
+    end
+
+    -- HELP only when taking damage
+    if Self.isConnected() then
+        local hp = Self.HealthPercent()
+        if lastHp < 0 then lastHp = hp end
+        if hp < lastHp then
+            if os.clock() - helpTime > config.alert_cooldown then
+                Self.Say(config.help_text)
+                Self.PrivateMessage(config.relay_to, config.help_text, 0)
+                helpTime = os.clock()
+                printf("[BLOCKER] HELP sent (attacked)")
+            end
+        end
+        lastHp = hp
+    end
+    wait(200)
+end)
