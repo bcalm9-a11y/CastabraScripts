@@ -1,0 +1,55 @@
+--[[ Anti-PK Flee (location-aware)
+     On a non-friend player: stop hunting, gear up, and run to safety —
+     in the spawn -> SafeLeave (rope out), in town/route -> depot. ]]
+local FRIENDS = {
+    "none"
+}
+local PLAYER_RANGE = 8
+local HASTE_BOOTS  = 3079
+local TIME_RING    = 3053
+
+-- YOUR spawn bounding box (estimate from your nodes — adjust to fit)
+local SPAWN = { x1 = 32500, y1 = 32115, x2 = 32545, y2 = 32185, zmin = 8, zmax = 11 }
+
+FRIENDS = table.lower(FRIENDS)
+FLEEING = false      -- GLOBAL: the walker lines below read this
+
+local function isFriend(name)
+    name = string.lower(name)
+    for i = 1, #FRIENDS do if FRIENDS[i] == name then return true end end
+    return false
+end
+
+local function enemyPlayerNear(range)
+    for _, p in ipairs(Creature.iPlayers(range, false)) do
+        if p.hpperc > 0 and not isFriend(p.name) then return true end
+    end
+    return false
+end
+
+local function inSpawn()
+    local p = Self.Position()
+    return p.z >= SPAWN.zmin and p.z <= SPAWN.zmax
+       and p.x >= SPAWN.x1 and p.x <= SPAWN.x2
+       and p.y >= SPAWN.y1 and p.y <= SPAWN.y2
+end
+
+Module.New("Anti-PK Flee", function()
+    if not Self.isConnected() or FLEEING then return end
+    if not enemyPlayerNear(PLAYER_RANGE) then return end
+
+    FLEEING = true
+    PAUSE_MORTHUR = true                       -- stop the hunter (needs the guard in that script)
+    Targeting.Enabled(false)
+    Looter.Enabled(false)
+    Self.EquipItem(SLOT_FEET, HASTE_BOOTS, 1)
+    Self.EquipItem(SLOT_RING, TIME_RING, 1)
+    Walker.Enabled(true)
+
+    if inSpawn() then
+        Walker.Goto("SafeLeave")               -- rope out, then forced to depot below
+    else
+        Walker.Goto("ReachDepot")              -- already in town/route -> straight to depot
+    end
+    printf("[FLEE] PK detected -> bailing")
+end)
