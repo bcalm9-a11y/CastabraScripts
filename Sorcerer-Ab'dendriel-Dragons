@@ -193,7 +193,7 @@ node: 32652, 31697, 7
 node: 32664, 31696, 7
 node: 32672, 31692, 7
 ReachDepot
-wait: 250
+lua: if FLEEING then Walker.Enabled(false) end
 wait: 250
 node: 32679, 31693, 7
 node: 32682, 31691, 7
