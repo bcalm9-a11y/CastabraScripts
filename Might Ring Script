@@ -1,0 +1,68 @@
+--[[ Might Ring on PK (not monster damage)
+     Equips might ring (3048) when a non-friend player is on screen, HP <= EQUIP_HP,
+     AND no monster is nearby (so the damage must be from the player).
+     Keeps it on while the player stays; removes once gone. ]]
+
+local RING_ID       = 3048       -- might ring (bag id)
+local EQUIP_HP      = 85         -- equip when attacked and HP at/below this %
+local PLAYER_RANGE  = 8          -- "on screen" for player detection
+local MONSTER_RANGE = 5          -- if a monster is within this, assume IT did the damage -> don't equip
+
+local FRIENDS = {
+    "Pearl", "Somalian Immigrant", "Georgie", "Kacey",
+    "Cwiftie", "Fibula", "Deej"
+}
+
+FRIENDS = table.lower(FRIENDS)
+local pkMode = false
+
+local function isFriend(name)
+    name = string.lower(name)
+    for i = 1, #FRIENDS do
+        if FRIENDS[i] == name then return true end
+    end
+    return false
+end
+
+local function enemyPlayerNear(range)
+    for _, p in ipairs(Creature.iPlayers(range, false)) do
+        if p.hpperc > 0 and not isFriend(p.name) then return true end
+    end
+    return false
+end
+
+local function monsterNear(range)
+    local pos = Self.Position()
+    for _, m in ipairs(Creature.iMonsters(range, false)) do
+        if m.hpperc > 0 and m.z == pos.z
+        and math.abs(m.x - pos.x) <= range and math.abs(m.y - pos.y) <= range then
+            return true
+        end
+    end
+    return false
+end
+
+Module.New("Might Ring on PK", function(mod)
+    if Self.isConnected() then
+
+        if enemyPlayerNear(PLAYER_RANGE) then
+            -- only trigger if HP is down AND no monster could be the cause
+            if Self.HealthPercent() <= EQUIP_HP and not monsterNear(MONSTER_RANGE) then
+                pkMode = true
+            end
+        else
+            pkMode = false                          -- player gone -> threat over
+        end
+
+        local slot = Self.Ring().id                 -- worn ring id, <=0 if empty
+        if pkMode then
+            if slot <= 0 then
+                Self.EquipItem(SLOT_RING, RING_ID, 1)
+            end
+        elseif slot > 0 then
+            Self.DequipItem(SLOT_RING)
+        end
+
+    end
+    mod:Delay(500)
+end)
