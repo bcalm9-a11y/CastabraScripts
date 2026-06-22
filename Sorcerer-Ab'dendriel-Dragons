@@ -1,0 +1,209 @@
+ScriptStart
+ToManas
+node: 32681, 31686, 8
+ladder: 32682, 31685, 8
+stand: 32682, 31687, 7
+ladder: 32682, 31687, 7
+lua: Walker.SettingsChange("re walk delay", 600)
+stand: 32681, 31688, 6
+node: 32681, 31678, 6
+node: 32681, 31668, 6
+stand: 32681, 31663, 6
+node: 32675, 31663, 6
+stand: 32669, 31662, 6
+stand: 32669, 31659, 6
+lua: Walker.SettingsChange("re walk delay", 1000)
+RetryManaStand
+stand: 32413, 32171, 7
+lua: if Self.DistanceFromPosition(32413, 32171, 7) > 2 then Walker.Goto("RetryManaStand") end
+BuyManaFluids
+goto: ToSpawn, item(8309) >= 500
+lua: local need = 500 - Self.ItemCount(8309); if need > 0 then local fits = math.floor((Self.Capity() - 50) / 1.80); local n = math.min(need, fits); if n > 0 then Self.Say("instant buy " .. n .. " mana fluid") end end
+wait: 1000
+lua: if Self.ItemCount(8309) < 500 then Self.Logout() end
+ToSpawn
+node: 32669, 31666, 6
+stand: 32669, 31666, 6
+wait: 250
+say: Exani Hur "Down
+wait: 250
+node: 32668, 31671, 7
+stand: 32667, 31674, 7
+node: 32659, 31674, 7
+node: 32657, 31682, 7
+wait: 355
+lua: Self.Say("Utana Vid")    
+wait: 355
+node: 32657, 31690, 7
+node: 32649, 31690, 7
+stand: 32645, 31693, 7
+node: 32643, 31697, 7
+stand: 32641, 31697, 7
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32641, 31704, 7
+node: 32641, 31713, 7
+node: 32641, 31733, 7
+node: 32641, 31741, 7
+node: 32641, 31767, 7
+node: 32641, 31780, 7
+wait: 355
+lua: Self.Say("Utana Vid")    
+wait: 355
+node: 32641, 31794, 7
+node: 32639, 31802, 7
+node: 32639, 31810, 7
+node: 32643, 31822, 7
+node: 32648, 31820, 7
+node: 32652, 31814, 7
+node: 32657, 31803, 7
+lua: Walker.SettingsChange("re walk delay", 1000)
+node: 32665, 31795, 7
+stand: 32671, 31796, 7
+stand: 32672, 31798, 6
+stand: 32671, 31801, 6
+node: 32677, 31803, 6
+stand: 32683, 31807, 6
+node: 32685, 31809, 7
+node: 32686, 31823, 7
+stand: 32682, 31829, 7
+stand: 32679, 31832, 7
+stand: 32675, 31835, 7
+wait: 355
+lua: Self.Say("Utana Vid")    
+wait: 355
+stand: 32676, 31839, 7
+stand: 32681, 31840, 7
+stand: 32684, 31845, 7
+stand: 32685, 31846, 7
+node: 32690, 31848, 7
+node: 32693, 31852, 7
+stand: 32694, 31850, 7
+node: 32695, 31848, 7
+stand: 32695, 31846, 7
+wait: 150
+lua: Self.EquipItem(SLOT_FEET, 8761, 1)
+wait: 150
+SpawnLoop
+node: 32688, 31844, 8
+stand: 32687, 31842, 8
+node: 32679, 31844, 9
+node: 32676, 31853, 9
+goto: SafeLeave, item(8309) <= 100
+node: 32670, 31855, 9
+node: 32664, 31858, 9
+node: 32656, 31854, 9
+stand: 32656, 31859, 9
+node: 32659, 31864, 10
+rope: 32656, 31859, 10
+node: 32661, 31860, 9
+goto: SafeLeave, item(8309) <= 100
+node: 32668, 31869, 9
+stand: 32668, 31872, 9
+node: 32664, 31877, 8
+stand: 32668, 31872, 8
+node: 32677, 31872, 9
+stand: 32680, 31876, 9
+node: 32675, 31872, 10
+node: 32671, 31870, 10
+node: 32679, 31876, 10
+rope: 32680, 31876, 10
+stand: 32679, 31877, 9
+node: 32679, 31874, 9
+node: 32676, 31864, 9
+goto: SafeLeave, item(8309) <= 100
+node: 32688, 31865, 9
+stand: 32694, 31865, 9
+node: 32689, 31868, 10
+node: 32686, 31860, 10
+node: 32682, 31852, 10
+node: 32671, 31846, 10
+stand: 32664, 31848, 10
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32663, 31852, 11
+node: 32653, 31858, 11
+node: 32660, 31852, 11
+node: 32667, 31858, 11
+node: 32668, 31868, 11
+node: 32667, 31877, 11
+node: 32668, 31865, 11
+node: 32665, 31854, 11
+lua: Walker.SettingsChange("re walk delay", 1000)
+stand: 32664, 31848, 11
+rope: 32664, 31848, 11
+stand: 32664, 31849, 10
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32668, 31848, 10
+node: 32679, 31848, 10
+node: 32685, 31860, 10
+node: 32686, 31868, 10
+node: 32692, 31866, 10
+lua: Walker.SettingsChange("re walk delay", 1000)
+rope: 32694, 31865, 10
+goto: SafeLeave, item(8309) <= 100
+node: 32693, 31867, 9
+node: 32677, 31851, 9
+SafeLeave
+node: 32684, 31842, 9
+stand: 32687, 31842, 9
+node: 32689, 31844, 8
+goto: ToTown, item(8309) <= 100
+goto: SpawnLoop
+ToTown
+wait: 150
+lua: Self.EquipItem(SLOT_FEET, 3079, 1)
+wait: 150
+node: 32689, 31844, 8
+stand: 32695, 31846, 8
+stand: 32694, 31851, 7
+wait: 250
+lua: Self.Say("Utana Vid")    
+wait: 250
+node: 32690, 31846, 7
+stand: 32685, 31846, 7
+node: 32680, 31843, 7
+stand: 32679, 31840, 7
+stand: 32676, 31840, 7
+stand: 32675, 31836, 7
+node: 32677, 31833, 7
+stand: 32682, 31830, 7
+node: 32683, 31824, 7
+node: 32685, 31815, 7
+stand: 32683, 31807, 7
+node: 32673, 31804, 6
+stand: 32671, 31801, 6
+node: 32672, 31798, 6
+stand: 32671, 31796, 6
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32658, 31803, 7
+node: 32648, 31819, 7
+node: 32642, 31804, 7
+wait: 355
+lua: Self.Say("Utana Vid")    
+wait: 355
+node: 32638, 31803, 7
+node: 32637, 31793, 7
+node: 32641, 31778, 7
+node: 32642, 31763, 7
+node: 32642, 31740, 7
+node: 32640, 31714, 7
+node: 32641, 31701, 7
+lua: Walker.SettingsChange("re walk delay", 1000)
+stand: 32642, 31697, 7
+node: 32652, 31697, 7
+node: 32664, 31696, 7
+node: 32672, 31692, 7
+ReachDepot
+wait: 250
+wait: 250
+node: 32679, 31693, 7
+node: 32682, 31691, 7
+stand: 32682, 31685, 7
+stand: 32681, 31686, 8
+DepositLoot
+reach depot:
+wait: 1000
+deposit items: {0}, 3071, 3416, 7430, 3029, 3028, 3392, 3386, 7402, 3280, 3428
+wait: 1000
+restart bps: 5801, 2868
+wait: 1000
+goto: ScriptStart
