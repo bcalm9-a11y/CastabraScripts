@@ -102,6 +102,12 @@ node: 32503, 32128, 9
 node: 32503, 32137, 9
 node: 32503, 32146, 9
 SafeLeave
+lua: if FLEEING then Walker.Goto("ToTown") end
+node: 32508, 32147, 9
+rope: 32511, 32147, 9
+node: 32518, 32153, 8
+goto: ToTown, item(8309) <= 100
+goto: SpawnLoop
 node: 32508, 32147, 9
 rope: 32511, 32147, 9
 node: 32518, 32153, 8
@@ -139,6 +145,10 @@ node: 32363, 32215, 7
 node: 32350, 32215, 7
 node: 32345, 32219, 7
 lua: Walker.SettingsChange("re walk delay", 1000)
+ReachDepot
+lua: if FLEEING then Walker.Enabled(false) Self.Logout() end
+wait: 250
+lua: Self.DequipItem(SLOT_RING)
 ReachDepot
 wait: 250
 wait: 250
