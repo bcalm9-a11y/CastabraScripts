@@ -1,0 +1,90 @@
+--[[ MAKER / WATCHER
+     - listed enemy on screen -> PM "Ping" to Casey
+     - logs Casey's "pong" acknowledgement
+     - Casey says "buu" in default chat (0): log out 10s then relog ]]
+local config = {
+    main_char      = "Casey",
+    alert_text     = "Ping",           -- live alert to Casey
+    ack_word       = "pong",           -- Casey's reply we listen for
+    enemies        = {
+        "Aniquilax", "Fvhrer", "Shupaekmsrp", "Eusoubare", "Free Maduro",
+        "Bitache", "Bolx", "Calabacitaz Is Back", "Comecei Depois", "Divine",
+        "Friends", "Gorrigan", "Hexa Champion", "Kboomb", "Khvicha Kvaratskhelia",
+        "Loord Gustavin", "Luluzera Thebest", "Nando Old Rush", "Nigier Cvel",
+        "Novato Jogador", "Oddfutur'ed", "Pacottera", "Papa Oso", "Penyzs Weysz",
+        "Roditoo", "Ross Amigao", "Sudden Power", "Vulgo Dgzadaa", "Wosiito",
+        "Yunkellshowx", "Onet", "Rodito"
+    },
+    detect_range   = 7,
+    passer         = "Casey","Lorhaann","Vibe Code","Deej","Fibula","Pekka","Pooladino",
+    buu_word       = "buu",
+    buu_channel    = 0,
+    relogin_after  = 10,
+    alert_cooldown = 30,
+    debug          = true
+}
+config.enemies = table.lower(config.enemies)
+local alertTime, relog, logTime = 0, false, 0
+
+local function enemyOnScreen()
+    for _, p in ipairs(Creature.iPlayers(config.detect_range, false)) do
+        if p.hpperc > 0 and table.find(config.enemies, string.lower(p.name)) then
+            return p.name
+        end
+    end
+    return nil
+end
+
+function blockerProxy(messages)
+    for _, msg in ipairs(messages) do
+        local spk = string.lower(tostring(msg.speaker))
+        local txt = string.lower(tostring(msg.message))
+        -- buu passthrough from Casey
+        if msg.channel == config.buu_channel and spk == string.lower(config.passer)
+        and txt == config.buu_word then
+            relog = true
+            printf("[MAKER] buu -> logging out for passthrough")
+            return
+        end
+        -- Casey's pong acknowledgement
+        if spk == string.lower(config.main_char) and txt == config.ack_word then
+            printf("[MAKER] Casey acknowledged (pong) -- Casey is bailing")
+            return
+        end
+    end
+end
+Proxy.New("blockerProxy")
+
+Module.New("Maker Enemy Watch + Buu", function()
+    if relog then
+        if Self.isConnected() then
+            if logTime == 0 then
+                Self.Logout()
+            else
+                relog, logTime = false, 0
+                printf("[MAKER] back online after buu")
+            end
+        else
+            if logTime == 0 then
+                logTime = os.clock()
+                printf("[MAKER] logged out; relog in " .. config.relogin_after .. "s")
+            elseif os.clock() - logTime > config.relogin_after then
+                Rifbot.PressKey(13, 2000)
+            end
+        end
+        wait(200)
+        return
+    end
+
+    if Self.isConnected() then
+        local name = enemyOnScreen()
+        if name then
+            if os.clock() - alertTime > config.alert_cooldown then
+                Self.PrivateMessage(config.main_char, config.alert_text, 0)
+                alertTime = os.clock()
+                printf("[MAKER] enemy '" .. name .. "' -> Ping sent to Casey")
+            end
+        end
+    end
+    wait(200)
+end)
