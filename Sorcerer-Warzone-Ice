@@ -1,0 +1,312 @@
+#### Start Settings: Healer ####
+
+25
+exura
+90
+
+exura gran
+70
+160
+exura vita
+4
+50
+1
+70
+0
+0
+70
+80
+4
+4
+4
+1
+#### Tools ####
+4
+4
+4
+exura vita
+1
+utani gran hur
+4
+4
+
+
+4
+4
+4
+4
+4
+4
+4
+30
+1
+65
+#### Runemaker ####
+4
+4
+4
+6
+70
+utana vid
+4
+4
+1
+exura
+#### Alarms ####
+1
+4
+1
+4
+4
+#### Shortkeys ####
+meuse 3160
+exivat
+ering
+sdlast
+ring 2167
+paralast
+mwtarget
+lifefluid
+antipush 3031, 3492
+uh
+meuse 3160
+mf
+runelast 3198
+amulet 2316
+turn 0
+step 0
+mousedrop 3031
+#### Skill Trainer ####
+1
+Ice Golem, Crystal Spider, Chakoya Windcaller, Shiny Spectre
+0
+100
+7
+#### Additional ####
+4
+3052
+4
+4
+vip1,vip2
+1
+
+
+
+
+
+
+4
+0
+4
+4
+follow
+5
+4
+3155
+Allin1mage
+4
+4
+8309
+4
+4
+1
+1
+1
+4
+50
+4
+2321
+3497, 3498, 3499, 3500
+3003
+3457
+169, 836, 841, 901, 904, 3577, 3578, 3579, 3580, 3581, 3582, 3583, 3584, 3585, 3586, 3587, 3588, 3589, 3590, 3591, 3592, 3593, 3594, 3595, 3596, 3597, 3598, 3599, 3600, 3601, 3602, 3606, 3607, 3723, 3724, 3725, 3726, 3728, 3729, 3730, 3731, 3732, 5096, 5678, 6125, 6277, 6278, 6392, 6500, 6541, 6542, 6543, 6544, 6545, 6569, 6574, 7158, 7159, 7372, 7373, 7375, 8010, 8011, 8012, 8013, 8014, 8015, 8017, 8019, 8177, 8197, 10329, 12310, 14085, 17457, 17820, 17821, 21143, 21144, 21146
+2472, 2481, 2480, 2482, 2319, 2431, 2432, 2433, 2434, 2523, 2358, 2359, 2360, 2361, 2469, 2471, 2473, 2981, 2983, 2985, 3503, 3504, 6016, 2118, 2119, 2120
+15
+8
+800
+1000
+600
+500
+40
+30000
+#### Waypoints ####
+StartScript
+ReachDepot
+lua: Walker.SettingsChange("re walk delay", 800)
+node: 32366, 31713, 10
+wait: 1000
+DepositOneLoot
+reach depot:
+wait: 1000
+deposit items: {0}, 7383, 3371, 3073, 7451, 6499, 3029, 3027, 3053, 3081, 3019
+wait: 1000
+restart bps: 2871, 2868
+wait: 1000
+DepositOneManas
+node: 32365, 31713, 10
+reach depot:
+deposit items: {8403}, 8309
+wait: 1000
+withdraw items: {8403, 0, 400}, 8309
+wait: 1000
+withdraw items: {8403, 0, 50}, 3147
+wait: 1000
+MakeSDS
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 7000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 7000
+say: Adori Vita Vis
+wait: 7000
+say: Adori Vita Vis
+wait: 7000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 9000
+say: Adori Vita Vis
+wait: 1000
+restart bps: 2871, 2868
+wait: 1000
+deposit items: {8403}, 8309, 3155, 3147
+wait: 1000
+restart bps: 2871, 2868
+wait: 1000
+ManasForHunt
+withdraw items: {8403, 0, 450}, 8309
+wait: 1000
+lua: if Self.ItemCount(8309) < 450 then Walker.Goto("ManasForHunt") end
+ToSpawn
+node: 32365, 31713, 10
+wait: 500
+stand: 32361, 31714, 10
+wait: 1000
+node: 32359, 31709, 9
+lua: Walker.SettingsChange("re walk delay", 200)
+node: 32366, 31702, 9
+lua: Walker.SettingsChange("re walk delay", 1200)
+node: 32370, 31699, 9
+stand: 32371, 31696, 9
+SpawnHunt
+stand: 32049, 31631, 14
+lua: if Self.ItemCount(8309) < 80 then Walker.Goto("GoToDp") end
+lua: Walker.SettingsChange("re walk delay", 200)
+node: 32060, 31650, 14
+lua: local t = os.time() while Self.Mana() < 900 and os.time() - t < 30 do wait(250, 500) end
+node: 32070, 31657, 14
+lua: if Self.ItemCount(8309) < 90 then Walker.Goto("GoToDp") end
+node: 32077, 31654, 14
+lua: local t = os.time() while Self.Mana() < 900 and os.time() - t < 30 do wait(250, 500) end
+node: 32080, 31650, 14
+lua: if Self.ItemCount(8309) < 100 then Walker.Goto("GoToDp") end
+node: 32086, 31641, 14
+lua: local t = os.time() while Self.Mana() < 900 and os.time() - t < 30 do wait(250, 500) end
+node: 32078, 31653, 14
+lua: if Self.ItemCount(8309) < 100 then Walker.Goto("GoToDp") end
+node: 32074, 31665, 14
+lua: local t = os.time() while Self.Mana() < 900 and os.time() - t < 30 do wait(250, 500) end
+node: 32080, 31683, 14
+lua: if Self.ItemCount(8309) < 125 then Walker.Goto("GoToDp") end
+node: 32080, 31689, 14
+lua: local t = os.time() while Self.Mana() < 900 and os.time() - t < 30 do wait(250, 500) end
+node: 32092, 31681, 14
+lua: if Self.ItemCount(8309) < 125 then Walker.Goto("GoToDp") end
+node: 32067, 31666, 14
+lua: local t = os.time() while Self.Mana() < 900 and os.time() - t < 30 do wait(250, 500) end
+node: 32053, 31665, 14
+lua: if Self.ItemCount(8309) < 130 then Walker.Goto("GoToDp") end
+node: 32057, 31652, 14
+lua: local t = os.time() while Self.Mana() < 900 and os.time() - t < 30 do wait(250, 500) end
+node: 32049, 31638, 14
+lua: if Self.ItemCount(8309) < 135 then Walker.Goto("GoToDp") end
+goto: SpawnHunt
+GoToDp
+lua: Walker.SettingsChange("re walk delay", 800)
+node: 32049, 31632, 14
+stand: 32049, 31630, 14
+node: 32368, 31701, 9
+node: 32362, 31702, 9
+node: 32359, 31706, 9
+node: 32359, 31710, 9
+stand: 32361, 31713, 9
+goto: ReachDepot
+#### Settings ####
+1948
+4
+obsidian knife
+orc, troll
+4
+34812, 34813, 34831, 34833, 34834, 34835, 34800, 34814, 34815, 34817, 34818, 34819, 34820, 34810, 34809, 34780, 34778, 34776, 34802
+20495
+385, 594, 607
+2597
+3308
+500
+#### Magic Shooter ####
+target spell,Exori vis,1,1,100,50,{0-100},none,ice golem, crystal spider, chakoya windcaller, shiny spectre
+#### Settings II ####
+4
+3447
+9
+4
+3081
+4
+200
+8311
+4
+4
+4
+2000
+800
+snake, slime, fire elemental, cobra
+3456
+800
+300
+1000
+0
+
+
+
+
+0
+0
+0
+100
+2853
+0
