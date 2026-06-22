@@ -1,8 +1,5 @@
 ScriptStart
 ToManas
-wait: 250
-lua: Self.EquipItem(SLOT_RING, 3053, 1)
-wait: 250
 node: 32347, 32226, 8
 stand: 32347, 32231, 8
 lua: Walker.SettingsChange("re walk delay", 100)
@@ -60,12 +57,10 @@ stand: 32520, 32157, 7
 stand: 32518, 32157, 7
 stand: 32518, 32156, 7
 stand: 32519, 32156, 8
-SpawnLoop
-wait: 250
-lua: Self.DequipItem(SLOT_RING)
-wait: 250
+wait: 150
 lua: Self.EquipItem(SLOT_FEET, 8761, 1)
-wait: 250
+wait: 150
+SpawnLoop
 node: 32517, 32152, 8
 node: 32513, 32141, 8
 stand: 32511, 32147, 8
@@ -113,11 +108,9 @@ node: 32518, 32153, 8
 goto: ToTown, item(8309) <= 100
 goto: SpawnLoop
 ToTown
-wait: 250
+wait: 150
 lua: Self.EquipItem(SLOT_FEET, 3079, 1)
-wait: 250
-lua: Self.EquipItem(SLOT_RING, 3053, 1)
-wait: 250
+wait: 150
 stand: 32519, 32156, 8
 stand: 32518, 32156, 8
 stand: 32517, 32157, 7
@@ -148,7 +141,6 @@ node: 32345, 32219, 7
 lua: Walker.SettingsChange("re walk delay", 1000)
 ReachDepot
 wait: 250
-lua: Self.DequipItem(SLOT_RING)
 wait: 250
 node: 32348, 32228, 7
 stand: 32348, 32231, 7
@@ -161,7 +153,7 @@ restart bps: 5801, 2868
 wait: 1000
 reach depot:
 wait: 1000
-deposit items: {0}, 3071, 3416, 7430, 3029, 3028, 3392, 3386, 7402, 3280, 3428, 
+deposit items: {0}, 3071, 3416, 7430, 3029, 3028, 3392, 3386, 7402, 3280, 3428
 wait: 1000
 restart bps: 5801, 2868
 wait: 1000
