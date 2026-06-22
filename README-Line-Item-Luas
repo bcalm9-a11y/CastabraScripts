@@ -1,0 +1,357 @@
+# RiftBot Lua & Walker Snippets
+
+A reference of single-line `lua:` walker entries, native walker conditions/states, and helper calls for RiftBot.
+
+> **How to read this**
+> - `lua:` lines go in the walker as a single Lua statement (chain statements with spaces, **never** newlines).
+> - `goto:` and `state:` lines are **native walker config**, not Lua.
+> - Item IDs / monster names / channel ids are **examples** — replace with your server's.
+> - Lines marked _(test)_ were inferred from spotted scripts, not confirmed from public module scripts — verify once before relying on them.
+
+## Table of Contents
+- [Supplies & Logout](#supplies--logout)
+- [Buying](#buying)
+- [Conditional Routing](#conditional-routing)
+- [Position Checks](#position-checks)
+- [Equipment Swaps](#equipment-swaps)
+- [Healing & Mana](#healing--mana)
+- [Doors & Ground Items](#doors--ground-items)
+- [Mana / Cooldown Gates](#mana--cooldown-gates)
+- [Crowd & Safety](#crowd--safety)
+- [Target-Based](#target-based)
+- [Walker, Targeting & Looter Control](#walker-targeting--looter-control)
+- [Comms, Alerts & Relog](#comms-alerts--relog)
+- [Time-Gated Actions](#time-gated-actions)
+- [Misc / Anti-Idle](#misc--anti-idle)
+- [Native Walker Conditions & States](#native-walker-conditions--states)
+- [API Quick Reference](#api-quick-reference)
+- [Tips](#tips)
+
+---
+
+## Supplies & Logout
+```lua
+lua: if Self.ItemCount(8309) < 100 then Walker.Goto("DepotRefill") end
+```
+Low on mana fluids → route to your refill label.
+```lua
+lua: if Self.ItemCount(8309) < 100 then Walker.Enabled(false) Self.Logout() end
+```
+Out of supplies → stop the walker and log out.
+```lua
+lua: local w=Self.Weapon() local n=Self.ItemCount(7368)+((w and w.id==7368) and w.count or 0) if n<400 then Walker.Enabled(false) Self.Logout() end
+```
+Counts assassin stars **including the equipped hand stack**, logs out under 400.
+
+---
+
+## Buying
+*(servers using "instant buy/withdraw" chat commands)*
+```lua
+lua: local n=math.floor((Self.Capity()-50)/1.80); if n>0 then Self.Say("instant buy "..n.." mana fluid") end
+```
+Buy enough manas to fill cap, leaving 50 free (1.80 oz each).
+```lua
+lua: Self.Say("instant withdraw "..(500*55))
+```
+Withdraw gold for a fixed 500 manas (55 each).
+```lua
+lua: local need=500-Self.ItemCount(8309); if need>0 then local f=math.floor((Self.Capity()-50)/1.80); local x=math.min(need,f); if x>0 then Self.Say("instant buy "..x.." mana fluid") end end
+```
+Buy up to 500, capped to what fits — never spam-buys with no cap.
+```lua
+lua: if Self.ItemCount(8309) < 500 then Self.Logout() end
+```
+After buying, if still under 500 (no cap or no money) → log out.
+
+---
+
+## Conditional Routing
+```lua
+lua: if Self.HealthPercent() < 40 then Walker.Goto("RunAway") end
+```
+Low HP → jump to an escape label.
+```lua
+lua: if Self.ItemCount(8309) >= 500 then Walker.Goto("ToSpawn") end
+```
+Already stocked → skip buying.
+```lua
+lua: if Self.Capity() < 50 then Walker.Goto("DropLoot") end
+```
+Cap nearly full → go offload loot.
+
+---
+
+## Position Checks
+```lua
+lua: local p=Self.Position() if p.x==32410 and p.y==32179 and p.z==7 then Walker.Goto("AtTile") end
+```
+Exact tile match.
+```lua
+lua: if Self.Position().z ~= 7 then Walker.Goto("WrongFloor") end
+```
+Wrong floor → recover.
+```lua
+lua: local p=Self.Position() if p.x>=32400 and p.x<=32450 and p.y>=32170 and p.y<=32200 then Walker.Goto("InSpawn") end
+```
+Inside an area box (e.g. "am I in the spawn?").
+```lua
+lua: local p=Self.Position() if not (p.z==7 and math.abs(p.x-32410)<=2 and math.abs(p.y-32179)<=2) then Walker.Goto("RetryLabel") end
+```
+Arrival check: if not within 2 sqm of the target tile (and right floor), go back to a label.
+```lua
+lua: Self.WalkTo(32410, 32179, 7)
+```
+Path to a tile from inside Lua. _(test)_
+
+---
+
+## Equipment Swaps
+```lua
+lua: Self.EquipItem(SLOT_FEET, 3079, 1)
+```
+Boots of haste on.
+```lua
+lua: Self.EquipItem(SLOT_FEET, 8761, 1)
+```
+Energy boots on.
+```lua
+lua: Self.EquipItem(SLOT_RING, 3053, 1)
+```
+Time ring on.
+```lua
+lua: Self.DequipItem(SLOT_RING)
+```
+Take the ring off (empties the slot). `EquipItem` from your bag auto-swaps whatever's worn.
+```lua
+lua: if Self.Position().z == 14 then Self.EquipItem(SLOT_FEET,8761,1) else Self.EquipItem(SLOT_FEET,3079,1) end
+```
+Auto boots by floor (energy boots on the spawn floor, haste elsewhere).
+
+---
+
+## Healing & Mana
+```lua
+lua: if Self.HealthPercent() < 50 then Self.UseItemWithMe(3160, 1000) end
+```
+UH rune at 50% HP (rune cooldown — no spell exhaust).
+```lua
+lua: if Self.ManaPercent() < 60 then Self.UseItemWithMe(8309, 500) end
+```
+Drink a mana fluid below 60% mana.
+```lua
+lua: if Self.HealthPercent() < 70 then Self.Say("exura gran") end
+```
+Heal spell below 70%.
+```lua
+lua: Self.Say("utani hur")
+```
+Cast haste.
+
+---
+
+## Doors & Ground Items
+```lua
+lua: Self.UseItemFromGround(31928, 32633, 10)
+```
+Use a fixed door/lever at exact coords (works from either side).
+```lua
+lua: Map.UseItem(32413, 32230, 10)
+```
+Same idea via the `Map` namespace — interchangeable; if one fails on a door, try the other. _(test)_
+```lua
+lua: local p=Self.Position() Self.UseItemFromGround(p.x, p.y+1, p.z)
+```
+Use the tile to your **south** (relative). North = `p.y-1`, East = `p.x+1`, West = `p.x-1`.
+
+---
+
+## Mana / Cooldown Gates
+*(hold the node until a condition is met)*
+```lua
+lua: while Self.Mana() < 900 do wait(250,500) end
+```
+Don't advance until mana ≥ 900.
+```lua
+lua: local t=os.time() while Self.Mana() < 900 and os.time()-t < 30 do wait(250,500) end
+```
+Same, with a 30s safety timeout so it can't hang forever.
+```lua
+lua: while #Creature.iMonsters(5,false) > 0 do wait(500) end
+```
+Wait until no monsters within 5 sqm before moving on.
+
+---
+
+## Crowd & Safety
+```lua
+lua: if #Creature.iPlayers(8,false) > 0 then Walker.Goto("Hide") end
+```
+Any player on screen → react.
+```lua
+lua: for _,p in ipairs(Creature.iPlayers(8,false)) do if string.lower(p.name)=="badguy" then Walker.Enabled(false) Self.Logout() end end
+```
+A specific named player appears → stop & log out.
+```lua
+lua: if #Creature.iMonsters(7,false) == 0 then Self.Say("exura gran") end
+```
+Heal only when the screen is clear of monsters.
+```lua
+lua: if #Creature.iMonsters(1,false) >= 3 then Self.Say("exori") end
+```
+3+ monsters adjacent → cast an AoE.
+
+---
+
+## Target-Based
+```lua
+lua: if Self.TargetID() <= 0 then Walker.Goto("FindTarget") end
+```
+Nothing targeted → go find one.
+```lua
+lua: local c=Creature.getCreatures(Self.TargetID()) if table.count(c)>=2 and c.hpperc<=15 then Self.Say("exori vis") end
+```
+Finish a low-HP target with a cheap spell.
+```lua
+lua: Targeting.setAttackMode("follow")
+```
+Chase/melee the target — close in for melee or to line up `exevo mort hur`. _(test)_
+```lua
+lua: Targeting.setAttackMode("distance")
+```
+Keep distance / kite. _(test)_
+```lua
+lua: Targeting.setAttackMode("stand")
+```
+Hold position (don't move toward the target). _(test)_
+
+---
+
+## Walker, Targeting & Looter Control
+```lua
+lua: Walker.SettingsChange("re walk delay", 200)
+```
+Change walk delay on the fly (lower = faster pathing).
+```lua
+lua: Walker.Enabled(false)
+```
+Stop the walker.
+```lua
+lua: Targeting.Enabled(false)
+```
+Stop attacking.
+```lua
+lua: Looter.Enabled(false)
+```
+Stop looting.
+```lua
+lua: if Walker.isStuck() then local m=Creature.iMonsters(3,false)[1] if m then Creature.Attack(m.id) end end
+```
+If stuck, attack the nearest monster to clear the path. *(See `state: targeting(if stuck)` for the native equivalent.)*
+
+---
+
+## Comms, Alerts & Relog
+```lua
+lua: Rifbot.PlaySound("Player On Screen.mp3")
+```
+Play an alarm (file lives in RiftBot's Alarms folder).
+```lua
+lua: Self.PrivateMessage("Casey", "DYING", 0)
+```
+Private-message another character.
+```lua
+lua: Self.SayOnChannel("PK ORCS THAIS", 17)
+```
+Post to a channel by id (e.g. 17 = Game-Chat).
+```lua
+lua: Rifbot.PressKey(13, 2000)
+```
+Press Enter — used to relog at the login screen.
+
+---
+
+## Time-Gated Actions
+*(globals persist between firings — note the missing `local`)*
+```lua
+lua: if not _ringT or os.time()-_ringT>180 then Self.EquipItem(SLOT_RING,3051,1) _ringT=os.time() end
+```
+Re-equip an expiring ring at most every 3 minutes.
+```lua
+lua: if not _alarmT or os.time()-_alarmT>10 then Rifbot.PlaySound("a.mp3") _alarmT=os.time() end
+```
+Throttle an alarm to once per 10 seconds.
+
+---
+
+## Misc / Anti-Idle
+```lua
+lua: Self.Turn(math.random(0,3))
+```
+Random turn — small anti-idle nudge. Directions: `0=N, 1=E, 2=S, 3=W`.
+```lua
+lua: if not Self.isConnected() then Rifbot.PressKey(13, 2000) end
+```
+Press Enter to relog if disconnected.
+
+---
+
+## Native Walker Conditions & States
+**Not Lua** — these are walker-config lines.
+
+### Conditional `goto:` ( `goto: <label>, <condition>` )
+```text
+goto: ToSpawn, item(8309) >= 500
+```
+Jump to label if you hold 500+ of an item.
+```text
+goto: west, distance(32407, 32231, 10) > 2
+```
+Jump to label if more than 2 sqm from a tile — native arrival/retry check. _(test: confirm it respects floor)_
+```text
+goto: DepotRefill, item(8309) < 100
+```
+Route to refill when low.
+
+> Condition functions usable in `goto:` lines: `item(id)`, `distance(x,y,z)`.
+
+### `state:` toggles
+```text
+state: targeting(off)
+state: targeting(on)
+state: targeting(if stuck)
+```
+Targeting off, on, or **only attack when stuck** (native attack-to-unstick). _(test)_
+```text
+state: looter(off)
+state: looter(on)
+```
+Toggle the looter (e.g. off while crossing a danger zone). _(test)_
+
+---
+
+## API Quick Reference
+
+| Area | Calls |
+|---|---|
+| **Position** | `Self.Position()` → `{x,y,z}` · `Self.DistanceFromPosition(x,y,z)` · `Self.WalkTo(x,y,z)` |
+| **Stats** | `Self.HealthPercent()` · `Self.ManaPercent()` · `Self.Mana()` · `Self.Capity()` *(free cap)* |
+| **Items** | `Self.ItemCount(id)` · `Self.UseItemWithMe(id,delay)` · `Self.UseItemFromGround(x,y,z)` · `Map.UseItem(x,y,z)` · `Self.EquipItem(SLOT,id,count)` · `Self.DequipItem(SLOT)` · `Self.Ring()` / `Self.Weapon()` → `.id`,`.count` |
+| **Speech** | `Self.Say(text)` · `Self.SayOnChannel(text,channelId)` · `Self.PrivateMessage(name,text,0)` |
+| **Self** | `Self.TargetID()` · `Self.Direction()` *(0-3)* · `Self.Turn(dir)` · `Self.Step(dir)` · `Self.Logout()` · `Self.isConnected()` |
+| **Creatures** | `Creature.iMonsters(range,false)` · `Creature.iPlayers(range,false)` · `Creature.iCreatures(range,false)` · `Creature.getCreatures(id)` · `Creature.Attack(id)` · `Creature.isMonster(c)` / `isPlayer(c)` — fields: `.name .x .y .z .hpperc .id` |
+| **Walker** | `Walker.Goto(label)` · `Walker.Enabled(b)` · `Walker.isEnabled()` · `Walker.isStuck()` · `Walker.SettingsChange(name,val)` |
+| **Targeting/Looter** | `Targeting.Enabled(b)` · `Targeting.setAttackMode("follow"/"distance"/"stand")` · `Looter.Enabled(b)` · `Looter.isLooting()` |
+| **Rifbot** | `Rifbot.PressKey(13,2000)` · `Rifbot.PlaySound(file)` · `Rifbot.FriendsList(true)` · `Rifbot.getClientInfo()` → `.pid` |
+| **Slots** | `SLOT_HEAD` `SLOT_AMULET` `SLOT_BACKPACK` `SLOT_ARMOR` `SLOT_RIGHT` `SLOT_LEFT` `SLOT_LEGS` `SLOT_FEET` `SLOT_RING` `SLOT_AMMO` |
+| **Walker conditions** | `item(id)` · `distance(x,y,z)` |
+| **Walker states** | `targeting(off/on/if stuck)` · `looter(off/on)` |
+
+---
+
+## Tips
+- **One statement per `lua:` line** — separate with spaces, never newlines.
+- Use **`local`** for temp vars; **omit `local`** only when a value must persist to the next firing (timers, counters).
+- Anything that must run **continuously** (not just when the walker reaches that node) belongs in a `Module.New(...)`, not a `lua:` line.
+- Prefer native `goto:`/`state:` lines over Lua equivalents where one exists — they're simpler and less error-prone.
+- Lines marked **_(test)_** are inferred and unconfirmed — verify in-game or against RiftBot's official function list before depending on them.
