@@ -1,0 +1,463 @@
+#### Start Settings: Healer ####
+0
+25
+exura
+0
+40
+exura gran
+0
+80
+exura vita
+4
+75
+1
+50
+0
+0
+70
+80
+4
+4
+4
+1
+#### Tools ####
+4
+4
+1
+exura
+4
+utani hur
+4
+4
+
+
+4
+4
+4
+4
+4
+4
+4
+30
+4
+60
+#### Runemaker ####
+4
+4
+4
+6
+70
+adura vita
+4
+4
+1
+exura
+#### Alarms ####
+1
+4
+4
+4
+4
+#### Shortkeys ####
+meuse 3160
+exivat
+ering
+sdlast
+ring 2167
+paralast
+mwtarget
+lifefluid
+antipush 3031, 3492
+uh
+meuse 3160
+mf
+runelast 3198
+amulet 2316
+turn 0
+step 0
+mousedrop 3031
+#### Skill Trainer ####
+1
+bog raider
+0
+100
+7
+#### Additional ####
+4
+3052
+4
+4
+vip1,vip2
+1
+
+
+
+
+
+
+4
+0
+4
+4
+follow
+5
+4
+3155
+Knight-Heal-Full-Rotation
+4
+4
+8309
+4
+4
+4
+4
+4
+4
+50
+4
+2321
+3497, 3498, 3499, 3500
+3003
+3457
+169, 836, 841, 901, 904, 3577, 3578, 3579, 3580, 3581, 3582, 3583, 3584, 3585, 3586, 3587, 3588, 3589, 3590, 3591, 3592, 3593, 3594, 3595, 3596, 3597, 3598, 3599, 3600, 3601, 3602, 3606, 3607, 3723, 3724, 3725, 3726, 3728, 3729, 3730, 3731, 3732, 5096, 5678, 6125, 6277, 6278, 6392, 6500, 6541, 6542, 6543, 6544, 6545, 6569, 6574, 7158, 7159, 7372, 7373, 7375, 8010, 8011, 8012, 8013, 8014, 8015, 8017, 8019, 8177, 8197, 10329, 12310, 14085, 17457, 17820, 17821, 21143, 21144, 21146
+2472, 2481, 2480, 2482, 2319, 2431, 2432, 2433, 2434, 2523, 2358, 2359, 2360, 2361, 2469, 2471, 2473, 2981, 2983, 2985, 3503, 3504, 6016
+15
+8
+100
+1000
+600
+500
+40
+30000
+#### Waypoints ####
+ScriptStart
+stand: 33168, 31800, 8
+wait: 1000
+reach depot:
+wait: 1000
+restart bps: 2868
+wait: 1000
+deposit items: {0}, 3567, 3065
+wait: 1000
+restart bps: 2868
+wait: 500
+ToManaTower
+node: 33168, 31805, 8
+node: 33171, 31809, 8
+stand: 33168, 31812, 8
+stand: 33171, 31811, 7
+stand: 33171, 31816, 7
+stand: 33170, 31821, 7
+node: 33176, 31821, 7
+node: 33182, 31821, 7
+node: 33188, 31820, 7
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 33190, 31824, 7
+node: 33192, 31828, 7
+node: 33192, 31832, 7
+say: utani hur
+node: 33198, 31833, 7
+node: 33199, 31837, 7
+node: 33199, 31841, 7
+node: 33205, 31842, 7
+node: 33211, 31843, 7
+node: 33217, 31843, 7
+node: 33223, 31841, 7
+node: 33229, 31841, 7
+node: 33235, 31841, 7
+lua: Walker.SettingsChange("re walk delay", 1000)
+node: 33241, 31842, 7
+stand: 33247, 31841, 7
+ManaTower
+stand: 33247, 31840, 6
+stand: 33254, 31840, 6
+stand: 33255, 31838, 6
+stand: 33255, 31841, 7
+BuyManas
+lua: local manaCount = Self.ItemCount(8309); local manaNeeded = 600 - manaCount; if manaNeeded > 0 then Self.Say("instant buy " .. manaNeeded .. " mana fluid") end
+wait: 1000
+stand: 33255, 31838, 7
+stand: 33255, 31837, 6
+wait: 1000
+stand: 33258, 31840, 6
+node: 33256, 31840, 5
+stand: 33257, 31842, 5
+node: 33256, 31840, 4
+stand: 33255, 31842, 4
+stand: 33255, 31841, 3
+wait: 1000
+lua: local uhCount = Self.ItemCount(3160); local uhNeeded = 200 - uhCount; if uhNeeded > 0 then Self.Say("instant buy " .. uhNeeded .. " ultimate healing rune") end
+wait: 1000
+stand: 33255, 31842, 3
+stand: 33256, 31843, 4
+stand: 33257, 31842, 4
+stand: 33256, 31843, 5
+stand: 33256, 31840, 5
+stand: 33258, 31840, 5
+node: 33255, 31840, 6
+lua: if Self.ItemCount(3160) < 200 or Self.ItemCount(8309) < 600 then Walker.Goto("ManaTower") end
+ToSpawn
+node: 33249, 31841, 6
+stand: 33247, 31841, 6
+node: 33241, 31842, 7
+node: 33237, 31838, 7
+lua: Walker.SettingsChange("re walk delay", 1000)
+node: 33237, 31834, 7
+node: 33237, 31830, 7
+say: utani hur
+node: 33237, 31826, 7
+node: 33243, 31823, 7
+node: 33243, 31819, 7
+node: 33243, 31815, 7
+say: utani hur
+node: 33243, 31811, 7
+node: 33243, 31807, 7
+node: 33243, 31803, 7
+node: 33243, 31799, 7
+node: 33243, 31795, 7
+node: 33244, 31791, 7
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 33246, 31787, 7
+node: 33250, 31783, 7
+node: 33256, 31782, 7
+node: 33262, 31782, 7
+say: utani hur
+node: 33268, 31779, 7
+node: 33274, 31779, 7
+node: 33280, 31779, 7
+node: 33284, 31775, 7
+say: utani hur
+node: 33290, 31775, 7
+node: 33296, 31775, 7
+node: 33302, 31775, 7
+stand: 33302, 31778, 7
+node: 33302, 31784, 7
+stand: 33302, 31784, 7
+shovel: 33303, 31784, 7
+stand: 33303, 31784, 7
+node: 33307, 31783, 8
+node: 33320, 31774, 8
+stand: 33321, 31772, 8
+node: 33331, 31773, 9
+node: 33327, 31777, 9
+node: 33321, 31778, 9
+node: 33315, 31776, 9
+say: utani hur
+node: 33314, 31772, 9
+node: 33313, 31768, 9
+node: 33313, 31764, 9
+node: 33317, 31760, 9
+stand: 33323, 31760, 9
+node: 33318, 31764, 10
+node: 33318, 31768, 10
+node: 33318, 31772, 10
+node: 33320, 31776, 10
+node: 33321, 31780, 10
+node: 33320, 31784, 10
+say: utani hur
+node: 33316, 31788, 10
+node: 33315, 31792, 10
+node: 33316, 31796, 10
+node: 33316, 31800, 10
+stand: 33318, 31803, 10
+node: 33320, 31803, 11
+stand: 33322, 31804, 11
+node: 33327, 31808, 12
+stand: 33331, 31809, 12
+SpawnLoop
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 33333, 31805, 13
+node: 33332, 31801, 13
+node: 33332, 31801, 13
+node: 33331, 31797, 13
+node: 33331, 31793, 13
+node: 33331, 31789, 13
+node: 33331, 31785, 13
+node: 33327, 31781, 13
+node: 33327, 31777, 13
+node: 33324, 31773, 13
+node: 33324, 31769, 13
+node: 33330, 31766, 13
+node: 33336, 31763, 13
+node: 33342, 31762, 13
+node: 33348, 31762, 13
+node: 33352, 31758, 13
+node: 33352, 31754, 13
+node: 33352, 31750, 13
+node: 33351, 31746, 13
+node: 33355, 31742, 13
+lua: Walker.SettingsChange("re walk delay", 800)
+node: 33351, 31746, 13
+rope: 33351, 31746, 13
+node: 33354, 31743, 12
+node: 33355, 31739, 12
+node: 33361, 31738, 12
+node: 33367, 31736, 12
+rope: 33367, 31736, 12
+node: 33368, 31740, 11
+stand: 33367, 31736, 11
+shovel: 33367, 31736, 11
+node: 33361, 31736, 12
+node: 33358, 31740, 12
+node: 33355, 31744, 12
+stand: 33351, 31746, 12
+shovel: 33351, 31746, 12
+node: 33352, 31750, 13
+node: 33352, 31754, 13
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 33352, 31758, 13
+node: 33346, 31761, 13
+node: 33340, 31762, 13
+node: 33334, 31764, 13
+node: 33328, 31766, 13
+node: 33325, 31770, 13
+node: 33324, 31774, 13
+node: 33326, 31778, 13
+node: 33329, 31782, 13
+node: 33330, 31786, 13
+node: 33330, 31782, 13
+node: 33331, 31786, 13
+node: 33331, 31790, 13
+node: 33331, 31794, 13
+node: 33331, 31798, 13
+node: 33333, 31802, 13
+node: 33333, 31806, 13
+lua: if Self.ItemCount(8309) < 150 or Self.ItemCount(3160) < 100 then Walker.Goto("LeaveSpawn") end
+goto: SpawnLoop
+wait: 500
+LeaveSpawn
+lua: Walker.SettingsChange("re walk delay", 1000)
+node: 33333, 31809, 13
+stand: 33331, 31809, 13
+node: 33325, 31806, 12
+rope: 33322, 31804, 12
+node: 33319, 31804, 11
+rope: 33318, 31803, 11
+node: 33316, 31800, 10
+node: 33316, 31796, 10
+node: 33316, 31792, 10
+say: utani hur
+node: 33316, 31788, 10
+node: 33319, 31784, 10
+node: 33320, 31780, 10
+node: 33321, 31776, 10
+node: 33319, 31772, 10
+node: 33318, 31768, 10
+node: 33319, 31764, 10
+node: 33322, 31760, 10
+rope: 33323, 31760, 10
+node: 33317, 31761, 9
+node: 33313, 31765, 9
+node: 33313, 31769, 9
+node: 33313, 31773, 9
+node: 33318, 31777, 9
+node: 33324, 31778, 9
+say: utani hur
+node: 33330, 31776, 9
+node: 33330, 31772, 9
+node: 33324, 31769, 9
+rope: 33321, 31772, 9
+node: 33317, 31777, 8
+node: 33311, 31778, 8
+node: 33308, 31782, 8
+rope: 33303, 31784, 8
+node: 33302, 31781, 7
+stand: 33304, 31784, 7
+stand: 33304, 31778, 7
+stand: 33303, 31777, 7
+stand: 33300, 31774, 7
+node: 33293, 31774, 7
+node: 33287, 31774, 7
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 33282, 31778, 7
+node: 33276, 31779, 7
+say: utani hur
+node: 33270, 31779, 7
+node: 33264, 31779, 7
+node: 33258, 31782, 7
+node: 33252, 31782, 7
+node: 33247, 31786, 7
+node: 33244, 31790, 7
+node: 33244, 31794, 7
+node: 33243, 31798, 7
+node: 33243, 31802, 7
+node: 33243, 31806, 7
+node: 33243, 31810, 7
+node: 33243, 31814, 7
+node: 33243, 31818, 7
+node: 33243, 31822, 7
+node: 33237, 31824, 7
+node: 33231, 31824, 7
+node: 33225, 31824, 7
+node: 33223, 31828, 7
+node: 33223, 31832, 7
+node: 33223, 31836, 7
+say: utani hur
+node: 33223, 31840, 7
+node: 33217, 31840, 7
+node: 33211, 31842, 7
+node: 33205, 31844, 7
+node: 33199, 31844, 7
+node: 33196, 31840, 7
+node: 33196, 31836, 7
+node: 33191, 31832, 7
+node: 33191, 31828, 7
+node: 33191, 31824, 7
+node: 33191, 31820, 7
+node: 33185, 31819, 7
+lua: Walker.SettingsChange("re walk delay", 1000)
+node: 33179, 31819, 7
+node: 33173, 31821, 7
+stand: 33171, 31820, 7
+stand: 33170, 31815, 7
+node: 33168, 31814, 8
+stand: 33172, 31813, 8
+node: 33172, 31806, 8
+node: 33168, 31800, 8
+goto: StartScript
+#### Settings ####
+1948
+4
+obsidian knife
+orc, troll
+4
+34812, 34813, 34831, 34833, 34834, 34835, 34800, 34814, 34815, 34817, 34818, 34819, 34820, 34810, 34809, 34780, 34778, 34776, 34802
+20495
+385, 594, 607
+2597
+3308
+500
+#### Magic Shooter ####
+target spell,exori hur,1,1,100,60,follow,bog raider
+knight exori,exori,2,1,100,50,{0-100},follow,bog raider
+knight exori,exori gran,2,1,100,50,{0-100},follow,bog raider
+#### Settings II ####
+4
+3447
+9
+4
+3081
+4
+200
+
+4
+4
+4
+2000
+1000
+snake, slime, fire elemental, cobra
+3456
+1200
+300
+1000
+0
+
+
+
+
+0
+0
+0
+100
+2853
+0
