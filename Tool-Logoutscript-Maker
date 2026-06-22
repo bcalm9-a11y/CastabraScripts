@@ -13,7 +13,7 @@ local config = {
         "Loord Gustavin", "Luluzera Thebest", "Nando Old Rush", "Nigier Cvel",
         "Novato Jogador", "Oddfutur'ed", "Pacottera", "Papa Oso", "Penyzs Weysz",
         "Roditoo", "Ross Amigao", "Sudden Power", "Vulgo Dgzadaa", "Wosiito",
-        "Yunkellshowx", "Onet", "Rodito"
+        "Yunkellshowx", "Onet", "Rodito", "Stop Running",
     },
     detect_range   = 7,
     passer         = "Casey","Lorhaann","Vibe Code","Deej","Fibula","Pekka","Pooladino",
