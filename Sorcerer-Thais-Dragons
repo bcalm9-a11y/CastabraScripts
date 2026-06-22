@@ -150,6 +150,7 @@ lua: if FLEEING then Walker.Enabled(false) Self.Logout() end
 wait: 250
 lua: Self.DequipItem(SLOT_RING)
 ReachDepot
+lua: if FLEEING then Walker.Enabled(false) end
 wait: 250
 wait: 250
 node: 32348, 32228, 7
