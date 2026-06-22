@@ -1,0 +1,119 @@
+--[[
+    Script Name:        [on label] Withdraw assassin stars from depot inbox
+    Description:        When character in walker reaches label "withdraw", it will check how many assassin stars are already in the backpack and withdraw only enough to reach the configured total from an open depot inbox.
+]]
+
+local config = {
+    label_name = "withdraw",                -- do this action on this current label in walker.
+    depot_id = 8403,                        -- ID of the open depot inbox.
+    container_index = 0,                    -- index of backpack to withdraw into (0 = main backpack).
+    amount = 300,                           -- total desired amount of assassin stars in backpack after withdrawal
+
+    -- Delays
+    moveItemsDelay = 600,                   -- delay in milliseconds to move items
+    openBpDelay = 800,                      -- delay in milliseconds to open containers
+}
+
+-- Define Assassin Star
+local ITEM = {id = 7368}                    -- Assassin Star (stackable)
+
+local withdrawedAmount, savedItemsAmount = 0, -1
+local remainingToWithdraw = 0               -- Will calculate this based on current inventory
+
+function getCont(id)
+    for i = 0, 15 do
+        local cont = Container.getInfo(i)
+        if table.count(cont) > 1 and cont.id == id then
+            return i, cont
+        end 
+    end
+    return -1, -1   
+end 
+
+function withdrawItems()
+    local index, depot = getCont(config.depot_id)
+    if depot == -1 then
+        print("Depot inbox not open. Please open it manually.")
+        return true
+    else
+        local items = Container.getItems(index)
+        for i, item in ipairs(items) do
+            if item.id == ITEM.id then
+                local dest = Container.getInfo(config.container_index)
+
+                if table.count(dest) < 3 then 
+                    print("Destination backpack is closed.")
+                    return true 
+                end
+
+                if dest.size == dest.amount then
+                    if savedItemsAmount ~= -1 then
+                        -- Already accounted, reset states
+                        savedItemsAmount = -1
+                    end
+                    local destItems = Container.getItems(config.container_index)
+                    for j, destItem in ipairs(destItems) do
+                        if destItem.id == dest.id then
+                            Container.UseItem(config.container_index, j - 1, destItem.id, false, config.openBpDelay)
+                            return false
+                        end    
+                    end
+                    withdrawedAmount = 0
+                    savedItemsAmount = -1
+                    return true
+                else
+                    if withdrawedAmount < remainingToWithdraw then
+                        if savedItemsAmount == -1 then
+                            savedItemsAmount = Self.ItemCount(ITEM.id, config.container_index)
+                            local toPickup = math.min(remainingToWithdraw - withdrawedAmount, item.count)
+
+                            -- Assume successful move and update withdrawedAmount immediately
+                            Container.MoveItemToContainer(index, i - 1, config.container_index, dest.amount, item.id, toPickup, config.moveItemsDelay)
+                            withdrawedAmount = withdrawedAmount + toPickup
+                            
+                            -- Small delay to let client update inventory count
+                            wait(config.moveItemsDelay + 50)
+
+                            return false
+                        else
+                            -- Instead of calculating based on Self.ItemCount, reset savedItemsAmount to -1 to allow next move
+                            savedItemsAmount = -1
+                            return false
+                        end
+                    else
+                        withdrawedAmount = 0
+                        savedItemsAmount = -1
+                        return true
+                    end
+                end
+            end
+        end
+
+        withdrawedAmount = 0
+        savedItemsAmount = -1
+        print("No more assassin stars in depot inbox.")
+        return true
+    end    
+end    
+
+function signal(label)
+    if label == config.label_name then
+        local alreadyInBp = Self.ItemCount(ITEM.id, config.container_index)
+        remainingToWithdraw = math.max(config.amount - alreadyInBp, 0)
+        print("You currently have " .. alreadyInBp .. " assassin stars. Withdrawing " .. remainingToWithdraw .. " more to reach " .. config.amount .. ".")
+
+        -- Only proceed if something still needs to be withdrawn
+        if remainingToWithdraw > 0 then
+            while true do
+                wait()
+                local ret = withdrawItems()
+                if ret then return true end
+            end
+        else
+            print("You already have the desired amount of assassin stars.")
+            return true
+        end
+    end
+end
+
+Walker.onLabel("signal")
