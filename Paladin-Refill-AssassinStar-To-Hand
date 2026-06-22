@@ -1,0 +1,32 @@
+--[[
+    Script Name:        Move Spear/Star to Hand.
+    Description:        Moves spears/stars or any stackable attack weapon from backpack to hand (weapon slot) until X amount are equipped.
+]]
+
+local config = {
+    spear = 7368,  -- id of basic spear
+    maxSpears = 100  -- maximum number of spears to equip in hand
+}
+
+-- DON'T EDIT BELOW
+
+Module.New("Move Spear to Hand", function ()
+    -- when connected
+    if Self.isConnected() then
+        -- load current equipped item in weapon slot
+        local weapon = Self.Weapon()
+        -- check if we have less than maxSpears in hand
+        if weapon.id == config.spear and weapon.count >= config.maxSpears then
+            return -- stop if we already have 8 or more spears equipped
+        end
+        
+        -- load amount of spears in containers
+        local count = Self.ItemCount(config.spear)
+        
+        -- when we have spears in containers
+        if count > 0 then
+            -- equip spear (will replace any existing spear)
+            Self.EquipItem(SLOT_WEAPON, config.spear, 1, 300)
+        end
+    end
+end)
