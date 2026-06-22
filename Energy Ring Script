@@ -1,0 +1,43 @@
+--[[
+    Energy Ring on Monster
+    Equips an energy ring when EQUIP_AT+ of MONSTER_NAME are on screen,
+    keeps it on, removes it once fewer than EQUIP_AT remain.
+]]
+
+local RING_ID      = 3051            -- energy ring (bag id)
+local MONSTER_NAME = "Dragon Lord" -- the monster to watch for
+local EQUIP_AT     = 1               -- equip at this many or more (1 = any appears; 2 = off if only 1)
+local RANGE        = 7               -- search range (screen)
+
+MONSTER_NAME = string.lower(MONSTER_NAME)
+
+local function countMonsters(range)
+    local count, pos = 0, Self.Position()
+    for _, c in ipairs(Creature.iCreatures(range, false)) do
+        if Creature.isMonster(c)
+        and c.name:lower() == MONSTER_NAME      -- exact name match
+        and c.z == pos.z
+        and c.hpperc > 0
+        and math.abs(c.x - pos.x) <= range
+        and math.abs(c.y - pos.y) <= range then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+Module.New("Energy Ring on Monster", function(mod)
+    if Self.isConnected() then
+        local n    = countMonsters(RANGE)
+        local slot = Self.Ring().id             -- worn ring id, or <=0 if slot empty
+
+        if n >= EQUIP_AT then
+            if slot <= 0 then
+                Self.EquipItem(SLOT_RING, RING_ID, 1)   -- enough on screen: ring on
+            end
+        elseif slot > 0 then
+            Self.DequipItem(SLOT_RING)                  -- dropped below threshold: ring off
+        end
+    end
+    mod:Delay(500)
+end)
