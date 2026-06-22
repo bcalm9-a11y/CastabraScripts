@@ -1,0 +1,146 @@
+--[[ KNIGHT ROTATION + HEALER + TARGETER (name-gated)
+     - Only targets/attacks monsters in config.MONSTERS
+     - HP < 75%   -> UH rune (3160), no attacks
+     - 2+ listed  -> exori gran (big pack) / exori
+     - 1 listed   -> exori hur (face it)
+     - none listed-> utani hur ONCE + exura up to 95%
+]]
+local config = {
+    MONSTERS     = {"Bog Raider"},   -- ONLY these get targeted/attacked (add names here)
+
+    EXORI_GRAN   = "exori gran",
+    EXORI        = "exori",
+    EXORI_HUR    = "exori hur",
+    EXURA        = "exura",
+    HASTE        = "utani hur",
+
+    UH_ID        = 3160,
+    UH_AT        = 75,
+    UH_DELAY     = 1000,
+    EXURA_TO     = 95,
+    EXURA_MIN_MANA = 20,
+
+    MANA_GRAN    = 340,
+    MANA_EXORI   = 115,
+    MANA_HUR     = 170,
+    GRAN_AMOUNT  = 3,
+    ENGAGE_RANGE = 3,
+    SCREEN_RANGE = 7,
+    SPELL_DELAY  = 1.0          -- seconds (os.clock)
+}
+
+config.MONSTERS = table.lower(config.MONSTERS)
+local useSpellTime, healTime = 0, 0
+local hasteArmed = true
+
+local function isListed(name)
+    name = string.lower(name)
+    for i = 1, #config.MONSTERS do
+        if config.MONSTERS[i] == name then return true end   -- exact match
+    end
+    return false
+end
+
+-- count LISTED monsters within range
+local function countMonsters(range)
+    local n, pos = 0, Self.Position()
+    for _, m in ipairs(Creature.iMonsters(range, false)) do
+        if m.hpperc > 0 and m.z == pos.z and isListed(m.name)
+        and math.abs(m.x - pos.x) <= range and math.abs(m.y - pos.y) <= range then
+            n = n + 1
+        end
+    end
+    return n
+end
+
+-- nearest LISTED monster within range
+local function nearestMonster(range)
+    local pos, best, bestD = Self.Position(), nil, 999
+    for _, m in ipairs(Creature.iMonsters(range, false)) do
+        if m.hpperc > 0 and m.z == pos.z and isListed(m.name) then
+            local d = math.max(math.abs(m.x - pos.x), math.abs(m.y - pos.y))
+            if d <= range and d < bestD then best, bestD = m, d end
+        end
+    end
+    return best
+end
+
+-- TARGETER: make sure we're attacking a listed monster
+local function ensureTarget()
+    local t = Self.TargetID()
+    if t > 0 then
+        local tc = Creature.getCreatures(t)
+        if table.count(tc) >= 2 and tc.hpperc > 0 and isListed(tc.name) then
+            return   -- already on a listed target
+        end
+    end
+    local m = nearestMonster(config.SCREEN_RANGE)
+    if m then Creature.Attack(m.id) end
+end
+
+Module.New("Knight Rotation + Heal", function()
+    if not Self.isConnected() then return end
+
+    local hp   = Self.HealthPercent()
+    local mana = Self.Mana()
+
+    -- 1. EMERGENCY: UH rune below 75%
+    if hp < config.UH_AT then
+        Self.UseItemWithMe(config.UH_ID, config.UH_DELAY)
+        return
+    end
+
+    -- 2. NO LISTED MONSTERS: haste once + exura
+    if countMonsters(config.SCREEN_RANGE) == 0 then
+        if hasteArmed then
+            Self.Say(config.HASTE)
+            hasteArmed = false
+            printf("[KNIGHT] utani hur (haste)")
+            return
+        end
+        if hp < config.EXURA_TO and mana >= config.EXURA_MIN_MANA
+        and os.clock() - healTime >= config.SPELL_DELAY then
+            Self.Say(config.EXURA)
+            healTime = os.clock()
+        end
+        return
+    end
+
+    -- listed monsters present
+    hasteArmed = true
+    ensureTarget()                              -- act as the targeter
+
+    -- 3. ATTACK (throttle)
+    if os.clock() - useSpellTime < config.SPELL_DELAY then return end
+
+    local adj = countMonsters(1)
+    if adj >= 2 then                            -- 2+ listed adjacent -> gran / exori
+        if adj >= config.GRAN_AMOUNT and mana >= config.MANA_GRAN then
+            Self.Say(config.EXORI_GRAN)
+            useSpellTime = os.clock()
+        elseif mana >= config.MANA_EXORI then
+            Self.Say(config.EXORI)
+            useSpellTime = os.clock()
+        end
+        return
+    end
+
+    -- single listed -> exori hur, face it
+    local mob = nearestMonster(config.ENGAGE_RANGE)
+    if mob and mana >= config.MANA_HUR then
+        local s = Self.Position()
+        local dx, dy = mob.x - s.x, mob.y - s.y
+        local wantDir
+        if math.abs(dx) >= math.abs(dy) then
+            wantDir = dx > 0 and 1 or 3
+        else
+            wantDir = dy > 0 and 2 or 0
+        end
+        if Self.Direction() == wantDir then
+            Self.Say(config.EXORI_HUR)
+            useSpellTime = os.clock()
+        else
+            Self.Turn(wantDir)
+        end
+    end
+end)
