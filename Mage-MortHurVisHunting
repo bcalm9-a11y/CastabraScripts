@@ -1,0 +1,247 @@
+--[[============================================================
+    Exevo Mort Hur Hunter (target-focused, exact-name match)
+      - WAVE_MONSTERS  -> approach, face, exevo mort hur until <WAVE_MIN_HPPERC, then exori vis
+      - EXORI_MONSTERS -> exori vis, stay diagonal
+      - Acts only on the current target (Self.TargetID)
+      - Player on screen -> exori vis only, never facing them
+      - Yields to healer below MIN_HP_TO_ATTACK
+============================================================--]]
+
+------------------------- CONFIG -------------------------
+local EXORI_WAVE   = "exevo mort hur"
+local EXORI_SINGLE = "exori vis"
+
+local WAVE_MONSTERS  = {"Dragon Lord"}     -- mort hur (then exori vis when low)
+local EXORI_MONSTERS = {"Dragon"}          -- exori vis only
+
+local MANA_WAVE        = 220
+local MANA_SINGLE      = 25
+local MIN_HP_TO_ATTACK = 70
+local WAVE_MIN_HPPERC  = 15
+
+local PLAYER_RANGE  = 8
+local STEP_DELAY    = 600        -- ms between steps (quick enough to close in)
+local CAST_DELAY    = 1.0        -- seconds between spells (os.clock)
+
+local FRIENDS = {
+    "Misc"
+}
+
+local ALLOW_WALK_IDS = {123, 2118, 2119, 2123, 2125, 2124}
+----------------------------------------------------------
+
+FRIENDS        = table.lower(FRIENDS)
+WAVE_MONSTERS  = table.lower(WAVE_MONSTERS)
+EXORI_MONSTERS = table.lower(EXORI_MONSTERS)
+local useSpellTime, stepTime = 0, 0
+
+------------------------- HELPERS -------------------------
+-- EXACT match (NOT table.find, which substring-matches "dragon" inside "dragon lord")
+local function inList(list, name)
+    name = string.lower(name)
+    for i = 1, #list do
+        if list[i] == name then return true end
+    end
+    return false
+end
+
+local function isFriend(name)   return inList(FRIENDS, name) end
+local function isWaveMob(name)  return inList(WAVE_MONSTERS, name) end
+local function isExoriMob(name) return inList(EXORI_MONSTERS, name) end
+local function isHuntMob(name)  return isWaveMob(name) or isExoriMob(name) end
+
+local function hasEnemyPlayer(range)
+    for _, p in ipairs(Creature.iPlayers(range, false)) do
+        if not isFriend(p.name) then return true end
+    end
+    return false
+end
+
+local function getLookDir()
+    local ok, d = pcall(function() return Self.Direction() end)
+    if ok and type(d) == "number" then return d end
+    return -1
+end
+
+local function isFacingPlayer(range)
+    local dir = getLookDir()
+    if dir < 0 then return false end
+    local s = Self.Position()
+    for _, p in ipairs(Creature.iPlayers(range, false)) do
+        if not isFriend(p.name) then
+            local dx, dy = p.x - s.x, p.y - s.y
+            if dir == 0 and dy < 0 and math.abs(dy) >= math.abs(dx) then return true end
+            if dir == 2 and dy > 0 and math.abs(dy) >= math.abs(dx) then return true end
+            if dir == 1 and dx > 0 and math.abs(dx) >= math.abs(dy) then return true end
+            if dir == 3 and dx < 0 and math.abs(dx) >= math.abs(dy) then return true end
+        end
+    end
+    return false
+end
+
+local function faceTarget(c)
+    local s = Self.Position()
+    local dx, dy = c.x - s.x, c.y - s.y
+    if math.abs(dx) >= math.abs(dy) then
+        Self.Turn(dx > 0 and 1 or 3)
+    else
+        Self.Turn(dy > 0 and 2 or 0)
+    end
+end
+
+local function tileIsWalkable(x, y, z)
+    local path = 0
+    local items = Map.GetItems(x, y, z)
+    for _, item in ipairs(items) do
+        if item.id == 99 then return false end
+        if Item.hasAttribute(item.id, ITEM_FLAG_NOT_WALKABLE) then return false end
+        if Item.hasAttribute(item.id, ITEM_FLAG_NOT_PATHABLE) then
+            if table.find(ALLOW_WALK_IDS, item.id) then
+                path = path + 1
+                if path >= 2 then return false end
+            else
+                return false
+            end
+        end
+    end
+    return true
+end
+
+local function delayedStep(dir)
+    if os.clock() - stepTime > (STEP_DELAY / 1000) then
+        Self.Step(dir)
+        stepTime = os.clock()
+    end
+end
+
+-- walk toward c (reduce Chebyshev distance)
+local function stepToward(c)
+    local s = Self.Position()
+    local OFF = { [0]={0,-1}, [1]={1,0}, [2]={0,1}, [3]={-1,0} }
+    local bestDir, bestD = nil, math.max(math.abs(c.x - s.x), math.abs(c.y - s.y))
+    for dir = 0, 3 do
+        local o = OFF[dir]
+        local nx, ny = s.x + o[1], s.y + o[2]
+        if tileIsWalkable(nx, ny, s.z) then
+            local nd = math.max(math.abs(c.x - nx), math.abs(c.y - ny))
+            if nd < bestD then bestD, bestDir = nd, dir end
+        end
+    end
+    if bestDir then delayedStep(bestDir) end
+end
+
+-- step off c's cardinal line so it sits diagonal (only if cardinally adjacent)
+local function avoidFrontWave(t)
+    local s = Self.Position()
+    if (t.x == s.x - 1 or t.x == s.x + 1) and t.y == s.y then
+        if tileIsWalkable(s.x, s.y - 1, s.z) then delayedStep(0)
+        elseif tileIsWalkable(s.x, s.y + 1, s.z) then delayedStep(2) end
+    elseif (t.y == s.y - 1 or t.y == s.y + 1) and t.x == s.x then
+        if tileIsWalkable(s.x + 1, s.y, s.z) then delayedStep(1)
+        elseif tileIsWalkable(s.x - 1, s.y, s.z) then delayedStep(3) end
+    end
+end
+
+----------------------- COMBAT MODULE -----------------------
+Module.New("Mort Hur Combat", function()
+    if os.clock() - useSpellTime < CAST_DELAY then return end
+
+    local mana = Self.Mana()
+    local hp   = Self.HealthPercent()
+    if hp < MIN_HP_TO_ATTACK then return end
+
+    local target = Self.TargetID()
+
+    -- SAFE MODE: player on screen -> exori vis the target only, never facing them
+    if hasEnemyPlayer(PLAYER_RANGE) then
+        if target > 0 and mana >= MANA_SINGLE and not isFacingPlayer(PLAYER_RANGE) then
+            Self.Say(EXORI_SINGLE)
+            useSpellTime = os.clock()
+        end
+        return
+    end
+
+    if target <= 0 then return end
+    local c = Creature.getCreatures(target)
+    if table.count(c) < 2 or c.hpperc <= 0 then return end
+    if not isHuntMob(c.name) then return end
+
+    local s = Self.Position()
+    local cardAdj = (math.abs(c.x - s.x) + math.abs(c.y - s.y)) == 1
+
+    -- DRAGON LORD: face + exevo mort hur (target, >=15%, orthogonally adjacent)
+    if isWaveMob(c.name) and c.hpperc >= WAVE_MIN_HPPERC and cardAdj then
+        if mana >= MANA_WAVE then
+            local wantDir
+            if     c.x - s.x ==  1 then wantDir = 1
+            elseif c.x - s.x == -1 then wantDir = 3
+            elseif c.y - s.y ==  1 then wantDir = 2
+            else                        wantDir = 0 end
+            if Self.Direction() == wantDir then
+                Self.Say(EXORI_WAVE)
+                useSpellTime = os.clock()
+            else
+                Self.Turn(wantDir)
+            end
+        end
+        return
+    end
+
+    -- EXORI VIS: dragons, low dragon lords, or dragon lords still approaching
+    if mana >= MANA_SINGLE then
+        Self.Say(EXORI_SINGLE)
+        useSpellTime = os.clock()
+    end
+end)
+
+--------------------- POSITIONING MODULE ---------------------
+Module.New("Mort Hur Positioning", function()
+    if Looter.isLooting() then return end
+    if hasEnemyPlayer(PLAYER_RANGE) then return end
+
+    local target = Self.TargetID()
+    if target <= 0 then return end
+    local c = Creature.getCreatures(target)
+    if table.count(c) < 2 or c.hpperc <= 0 then return end
+
+    local s = Self.Position()
+    local dx, dy = c.x - s.x, c.y - s.y
+
+    if isWaveMob(c.name) and c.hpperc >= WAVE_MIN_HPPERC then
+        -- DRAGON LORD -> close in, then square up FRONT-ON
+        local dist = math.max(math.abs(dx), math.abs(dy))
+        if dist > 1 then
+            stepToward(c)
+        elseif math.abs(dx) == 1 and math.abs(dy) == 1 then
+            if tileIsWalkable(s.x, s.y + (dy > 0 and 1 or -1), s.z) then
+                delayedStep(dy > 0 and 2 or 0)
+            elseif tileIsWalkable(s.x + (dx > 0 and 1 or -1), s.y, s.z) then
+                delayedStep(dx > 0 and 1 or 3)
+            end
+        else
+            faceTarget(c)
+        end
+    else
+        -- DRAGON (exori vis) -> stay diagonal
+        avoidFrontWave(c)
+    end
+end)
+
+------------------------ ANTI-PK MODULE ----------------------
+Module.New("Anti PK Face 2sqm", function(mod)
+    local s = Self.Position()
+    for _, p in ipairs(Creature.iPlayers(PLAYER_RANGE, false)) do
+        if not isFriend(p.name) then
+            local dx, dy = p.x - s.x, p.y - s.y
+            if math.abs(dx) <= 2 and math.abs(dy) <= 2 then
+                if math.abs(dx) >= math.abs(dy) then
+                    Self.Turn(dx > 0 and 3 or 1)
+                else
+                    Self.Turn(dy > 0 and 0 or 2)
+                end
+                break
+            end
+        end
+    end
+    mod:Delay(100)
+end)
