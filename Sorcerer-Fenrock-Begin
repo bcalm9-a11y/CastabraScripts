@@ -1,0 +1,74 @@
+StartScript
+ToManas
+node: 32338, 31781, 8
+stand: 32332, 31781, 8
+node: 32337, 31784, 7
+node: 32338, 31788, 7
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32343, 31802, 7
+node: 32345, 31820, 7
+stand: 32350, 31823, 7
+lua: Walker.SettingsChange("re walk delay", 1000)
+node: 32349, 31828, 7
+stand: 32345, 31828, 7
+RetryManaStand
+stand: 32413, 32171, 7
+lua: if Self.DistanceFromPosition(32413, 32171, 7) > 2 then Walker.Goto("RetryManaStand") end
+BuyManaFluids
+goto: ToSpawn, item(8309) >= 500
+lua: local need = 500 - Self.ItemCount(8309); if need > 0 then local fits = math.floor((Self.Capity() - 50) / 1.80); local n = math.min(need, fits); if n > 0 then Self.Say("instant buy " .. n .. " mana fluid") end end
+wait: 1000
+lua: if Self.ItemCount(8309) < 500 then Self.Logout() end
+ToSpawn
+node: 32350, 31820, 7
+node: 32334, 31818, 7
+node: 32319, 31812, 7
+node: 32318, 31803, 7
+node: 32318, 31794, 7
+node: 32318, 31789, 7
+node: 32298, 31789, 7
+stand: 32290, 31790, 7
+node: 32279, 31789, 7
+node: 32269, 31783, 7
+stand: 32266, 31780, 7
+node: 32264, 31773, 7
+node: 32264, 31763, 7
+stand: 32264, 31758, 7
+stand: 32262, 31756, 7
+stand: 32259, 31756, 7
+stand: 32257, 31756, 7
+stand: 32257, 31754, 7
+node: 32254, 31751, 7
+node: 32247, 31753, 7
+stand: 32246, 31753, 7
+node: 32239, 31752, 7
+node: 32234, 31751, 7
+stand: 32229, 31752, 7
+node: 32225, 31755, 7
+stand: 32220, 31755, 7
+node: 32216, 31756, 7
+IsleofKingsBoat
+stand: 32213, 31756, 7
+ladder: 32211, 31757, 7
+node: 32210, 31758, 6
+node: 32207, 31756, 6
+stand: 32205, 31756, 6
+say: bring me to fenrock
+node: 31962, 31875, 7
+stand: 31958, 31873, 7
+stand: 31958, 31873, 7
+stand: 31956, 31873, 6
+stand: 31955, 31874, 6
+stand: 31955, 31874, 6
+stand: 31955, 31877, 7
+stand: 31954, 31877, 7
+stand: 31954, 31877, 7
+stand: 31954, 31876, 8
+stand: 31954, 31874, 8
+stand: 31954, 31874, 8
+stand: 31954, 31873, 9
+node: 31953, 31869, 9
+node: 31953, 31869, 9
+SpawnLoop
+node: 31948, 31864, 9
+node: 31940, 31857, 9
