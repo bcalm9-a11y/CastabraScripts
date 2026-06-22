@@ -1,13 +1,9 @@
---[[ CASEY (main) -- bails on:
-       
-"PK ORCS THAIS" in Game-Chat (17) via Nigel's relay, OR
-a blocker's name in the deaths channel (25) as a direct backup.
- Bail = pause walker/looter, finish monsters, equip energy ring,
- log out once the pz/battle lock clears. ]]
+--[[ CASEY (main) -- on "Ping" from a maker: reply "pong" + begin logout routine.
+     Also bails if a maker dies (deaths channel 25) [optional backup]. ]]
 local config = {
-    gamechat_id   = 17,
-    trigger       = "BRING ME TO THAIS",
-    senders       = {"Nigel the Nigerian"},               -- only the relay (optional)
+    senders       = {"Kazey", "Jessesgotagun", "Nigel the Nigerian"},
+    alert_word    = "ping",            -- maker's live alert
+    ack_reply     = "pong",            -- our acknowledgement back
     death_channel = 25,
     death_names   = {"Kazey", "Jessesgotagun", "Nigel the Nigerian"},
     monster_range = 7,
@@ -15,14 +11,13 @@ local config = {
     debug         = true
 }
 config.senders     = table.lower(config.senders)
-config.death_names = table.lower(config.deathnames)
+config.death_names = table.lower(config.death_names)
 
 local bailing = false
 local paused, ringDone = false, false
 
-local function fromRelay(spk)
-    if #config.senders == 0 then return true end
-    for , s in ipairs(config.senders) do
+local function isSender(spk)
+    for _, s in ipairs(config.senders) do
         if spk == s then return true end
     end
     return false
@@ -36,19 +31,19 @@ function bailProxy(messages)
         local spk = string.lower(tostring(msg.speaker))
         local txt = string.lower(tostring(msg.message))
 
-        -- A) relay phrase in Game-Chat
-        if msg.channel == config.gamechat_id and fromRelay(spk)
-        and string.find(txt, config.trigger, 1, true) then
+        -- A) "Ping" from a maker -> pong + bail
+        if isSender(spk) and txt == config.alert_word then
+            Self.PrivateMessage(tostring(msg.speaker), config.ack_reply, 0)
             bailing = true
-            printf("[CASEY] BAIL (relay)")
+            printf("[CASEY] ping from " .. spk .. " -> pong sent + BAIL")
             return
         end
-        -- B) backup: a blocker dies in the deaths channel
-        if msg.channel == config.deathchannel then
-            for , name in ipairs(config.death_names) do
+        -- B) maker death backup
+        if msg.channel == config.death_channel then
+            for _, name in ipairs(config.death_names) do
                 if string.find(txt, name, 1, true) or string.find(spk, name, 1, true) then
                     bailing = true
-                    printf("[CASEY] BAIL (death backup: " .. name .. ")")
+                    printf("[CASEY] BAIL (death: " .. name .. ")")
                     return
                 end
             end
@@ -85,73 +80,4 @@ Module.New("Casey Bail Routine", function()
     if Targeting.isEnabled() then Targeting.Enabled(false) end
     Self.Logout()
     wait(1000)
-end)
---[[ LEVEL 8 BLOCKER (identical copy on Kazey AND Jessesgotagun)
-     
-HELP only when ATTACKED (HP drops) -- ignores players just appearing
-one HELP per event (alert_cooldown)
-Casey says "buu" in default chat (0): log out 10s then relog ]]
-local config = {
-    help_text      = "ALERT ALERT",
-    relay_to       = "Nigel the Nigerian",
-    passer         = "Casey",
-    buu_word       = "buu",
-    buu_channel    = 0,
-    relogin_after  = 10,        -- stay logged out 10s so Casey can pass
-    alertcooldown = 30,        -- one HELP per PK event (seconds)
-    debug          = true
-}
-local helpTime, relog, logTime = 0, false, 0
-local lastHp = -1
-
-function blockerProxy(messages)
-    for , msg in ipairs(messages) do
-        if msg.channel == config.buu_channel
-        and string.lower(tostring(msg.speaker))  == string.lower(config.passer)
-        and string.lower(tostring(msg.message)) == config.buu_word then
-            relog = true
-            printf("[BLOCKER] buu -> logging out for passthrough")
-            return
-        end
-    end
-end
-Proxy.New("blockerProxy")
-
-Module.New("Lvl8 Blocker", function()
-    -- buu logout / relog state machine
-    if relog then
-        if Self.isConnected() then
-            if logTime == 0 then
-                Self.Logout()
-            else
-                relog, logTime = false, 0
-                printf("[BLOCKER] back online after buu")
-            end
-        else
-            if logTime == 0 then
-                logTime = os.clock()
-                printf("[BLOCKER] logged out; relog in " .. config.relogin_after .. "s")
-            elseif os.clock() - logTime > config.relogin_after then
-                Rifbot.PressKey(13, 2000)
-            end
-        end
-        wait(200)
-        return
-    end
-
-    -- HELP only when taking damage
-    if Self.isConnected() then
-        local hp = Self.HealthPercent()
-        if lastHp < 0 then lastHp = hp end
-        if hp < lastHp then
-            if os.clock() - helpTime > config.alert_cooldown then
-                Self.Say(config.help_text)
-                Self.PrivateMessage(config.relay_to, config.help_text, 0)
-                helpTime = os.clock()
-                printf("[BLOCKER] HELP sent (attacked)")
-            end
-        end
-        lastHp = hp
-    end
-    wait(200)
 end)
