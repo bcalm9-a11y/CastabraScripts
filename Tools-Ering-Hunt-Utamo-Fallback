@@ -1,0 +1,45 @@
+--[[ Energy Ring + Utamo Vita manager
+     - Keeps an energy ring (3051) on, swapping it 5s before it expires (no gap).
+     - When out of rings, holds utamo vita, recast ~10s before its 180s expiry.
+     - Goes back to rings automatically once restocked. ]]
+
+local RING_ID         = 3051            -- energy ring (bag id)
+local RING_DURATION   = 1200             -- seconds an energy ring lasts WORN -- SET to your server's value
+local SWAP_BEFORE     = 15               -- swap the ring this many seconds before it expires
+
+local SHIELD_SPELL    = "utamo vita"    -- fallback when out of rings
+local SHIELD_DURATION = 180             -- seconds utamo vita lasts
+local SHIELD_BEFORE   = 15              -- recast this many seconds before it expires
+local MIN_MANA        = 50              -- just the utamo vita cast cost (shield persists at 0 mana)
+
+local ringEquipTime = 0
+local lastShield    = 0
+
+local function equipFreshRing()
+    Self.EquipItem(SLOT_RING, RING_ID, 1)
+    ringEquipTime = os.clock()
+end
+
+Module.New("Ring + Utamo Vita", function(mod)
+    if Self.isConnected() then
+        local slot = Self.Ring().id        -- worn ring id, <=0 if slot empty
+
+        if slot <= 0 then
+            -- no ring worn (expired or none)
+            if Self.ItemCount(RING_ID) > 0 then
+                equipFreshRing()                                   -- have rings -> put one on
+            elseif Self.Mana() >= MIN_MANA
+            and os.time() - lastShield > (SHIELD_DURATION - SHIELD_BEFORE) then
+                Self.Say(SHIELD_SPELL)                             -- out of rings -> hold the shield
+                lastShield = os.time()
+            end
+        else
+            -- ring worn -> swap proactively before it falls off
+            if os.clock() - ringEquipTime >= (RING_DURATION - SWAP_BEFORE)
+            and Self.ItemCount(RING_ID) > 0 then
+                equipFreshRing()                                   -- fresh ring on -> never a gap
+            end
+        end
+    end
+    mod:Delay(500)
+end)
