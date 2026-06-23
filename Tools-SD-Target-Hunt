@@ -1,0 +1,31 @@
+--[[ SD the target (no hotkeys) ]]
+local SD_ID    = 3155              -- sudden death rune
+local MONSTERS = {"Venom Dragon"}  -- only SD these
+local SD_DELAY = 2.0               -- seconds between throws (rune exhaust)
+local SAFE_HP  = 70                -- don't attack below this self HP%
+
+MONSTERS = table.lower(MONSTERS)
+local lastSD = 0
+
+local function isListed(name)
+    name = string.lower(name)
+    for i = 1, #MONSTERS do if MONSTERS[i] == name then return true end end
+    return false
+end
+
+Module.New("SD Target", function(mod)
+    if not Self.isConnected() then mod:Delay(100) return end
+    if os.clock() - lastSD < SD_DELAY then mod:Delay(100) return end
+    if Self.HealthPercent() < SAFE_HP then mod:Delay(100) return end
+
+    local t = Self.TargetID()
+    if t > 0 then
+        local c = Creature.getCreatures(t)
+        if table.count(c) >= 2 and c.hpperc > 0 and isListed(c.name)
+        and Self.ItemCount(SD_ID) > 0 then            -- have a rune to throw
+            Self.UseItemWithCreature(SD_ID, t)
+            lastSD = os.clock()
+        end
+    end
+    mod:Delay(100)
+end)
