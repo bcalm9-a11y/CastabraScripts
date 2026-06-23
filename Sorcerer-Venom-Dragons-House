@@ -98,43 +98,9 @@ lua: Walker.SettingsChange("re walk delay", 800)
 stand: 32563, 32478, 6
 lua: Self.EquipItem(SLOT_FEET, 7625, 1)
 SpawnLoop
-lua: if Self.ItemCount(3155) < 120 or Self.ItemCount(8309) < 150 or Self.ItemCount(3051) < 1 then Walker.Goto("LeaveSpawn") end
-stand: 32561, 32477, 7
-node: 32556, 32481, 7
-node: 32546, 32485, 7
-stand: 32541, 32494, 7
-wait: 350
-stand: 32536, 32496, 7
-node: 32536, 32508, 7
-node: 32524, 32506, 7
-node: 32518, 32493, 7
-lua: if Self.ItemCount(3155) < 120 or Self.ItemCount(8309) < 150 or Self.ItemCount(3051) < 1 then Walker.Goto("LeaveSpawn") end
-stand: 32511, 32487, 7
-wait: 350
-stand: 32505, 32487, 7
-node: 32500, 32472, 7
-node: 32508, 32482, 7
-node: 32514, 32478, 7
-node: 32520, 32494, 7
-node: 32538, 32492, 7
-node: 32547, 32485, 7
-node: 32560, 32481, 7
-lua: Walker.SettingsChange("re walk delay", 800)
-lua: if Self.ItemCount(3155) < 120 or Self.ItemCount(8309) < 150 or Self.ItemCount(3051) < 1 then Walker.Goto("LeaveSpawn") end
-node: 32563, 32481, 7
-stand: 32563, 32479, 7
-stand: 32562, 32479, 6
-lua: Walker.SettingsChange("re walk delay", 100)
-stand: 32564, 32480, 6
-node: 32569, 32476, 6
-node: 32580, 32478, 6
-node: 32589, 32483, 6
-node: 32593, 32490, 6
-node: 32585, 32480, 6
-node: 32573, 32475, 6
-node: 32565, 32478, 6
-lua: Walker.SettingsChange("re walk delay", 800)
-stand: 32563, 32478, 6
+=============================
+SpawwnLoopNeeded
+=============================
 lua: if Self.ItemCount(3155) < 165 or Self.ItemCount(8309) < 190 or Self.ItemCount(3051) < 1 then Walker.Goto("LeaveSpawn") end
 goto: SpawnLoop
 LeaveSpawn
@@ -189,4 +155,5 @@ stand: 32745, 32697, 7
 stand: 32744, 32697, 7
 ladder: 32744, 32697, 7
 stand: 32745, 32698, 6
+ReachDepot
 goto: ScriptStart
