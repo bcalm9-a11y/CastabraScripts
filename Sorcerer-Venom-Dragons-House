@@ -21,8 +21,8 @@ wait: 500
 PickUpSD
 lua: _sdLast = Self.ItemCount(3155)
 stand: 32746, 32698, 6
-wait: 500
-lua: Self.PickupItem(32746, 32697, 6, 3155, 50)
+wait: 300
+lua: Self.PickupItem(32746, 32697, 6, 3155, math.min(350 - Self.ItemCount(3155), 100))
 wait: 400
 lua: if Self.ItemCount(3155) <= _sdLast then Walker.Enabled(false) Self.Logout() end
 goto: PickUpSD, item(3155) < 350
@@ -31,10 +31,19 @@ node: 32746, 32698, 6
 wait: 500
 PickUpManas
 lua: _mLast = Self.ItemCount(8309)
-lua: Self.PickupItem(32746, 32698, 6, 8309, 50)
+lua: Self.PickupItem(32746, 32698, 6, 8309, math.min(400 - Self.ItemCount(8309), 100))
 wait: 400
 lua: if Self.ItemCount(8309) <= _mLast then Walker.Enabled(false) Self.Logout() end
-goto: PickUpManas, item(8309) < 400wait: 500
+goto: PickUpManas, item(8309) < 400
+PickUpRings
+lua: _ringLast = Self.ItemCount(3051)
+stand: ENTER_STAND_HERE
+wait: 300
+lua: Self.PickupItem(RINGX, RINGY, RINGZ, 3051, math.min(5 - Self.ItemCount(3051), 100))
+wait: 400
+lua: if Self.ItemCount(3051) <= _ringLast then Walker.Enabled(false) Self.Logout() end
+goto: PickUpRings, item(3051) < 5
+wait: 500
 restart bps: 2869
 LeaveHouse
 stand: 32744, 32697, 6
