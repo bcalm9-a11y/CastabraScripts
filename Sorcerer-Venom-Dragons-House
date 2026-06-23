@@ -62,12 +62,15 @@ stand: 32564, 32525, 6
 wait: 500
 lua: if Self.ItemCount(3155) < 110 or Self.ItemCount(8309) < 130 then Walker.Goto("LeaveSpawn") end
 Tohunt
+lua: Walker.SettingsChange("re walk delay", 100)
 node: 32564, 32519, 7
 node: 32569, 32504, 7
 node: 32578, 32496, 7
+lua: Walker.SettingsChange("re walk delay", 800)
 stand: 32577, 32496, 7
 wait: 500
 stand: 32576, 32496, 7
+lua: Walker.SettingsChange("re walk delay", 100)
 node: 32571, 32492, 6
 node: 32563, 32492, 6
 node: 32549, 32490, 6
@@ -82,6 +85,7 @@ node: 32569, 32466, 6
 node: 32579, 32476, 6
 node: 32568, 32477, 6
 stand: 32565, 32478, 6
+lua: Walker.SettingsChange("re walk delay", 800)
 stand: 32563, 32478, 6
 SpawnLoop
 lua: Self.EquipItem(SLOT_FEET, 8761, 1)
@@ -89,13 +93,13 @@ stand: 32561, 32477, 7
 node: 32556, 32481, 7
 node: 32546, 32485, 7
 stand: 32541, 32494, 7
-wait: 1000
+wait: 350
 stand: 32536, 32496, 7
 node: 32536, 32508, 7
 node: 32524, 32506, 7
 node: 32518, 32493, 7
 stand: 32511, 32487, 7
-wait: 1000
+wait: 350
 stand: 32505, 32487, 7
 node: 32500, 32472, 7
 node: 32508, 32482, 7
@@ -104,10 +108,12 @@ node: 32520, 32494, 7
 node: 32538, 32492, 7
 node: 32547, 32485, 7
 node: 32560, 32481, 7
+lua: Walker.SettingsChange("re walk delay", 800)
 lua: if Self.ItemCount(3155) < 120 or Self.ItemCount(8309) < 150 then Walker.Goto("LeaveSpawn") end
 node: 32563, 32481, 7
 stand: 32563, 32479, 7
 stand: 32562, 32479, 6
+lua: Walker.SettingsChange("re walk delay", 100)
 stand: 32564, 32480, 6
 node: 32569, 32476, 6
 node: 32580, 32478, 6
@@ -116,6 +122,7 @@ node: 32593, 32490, 6
 node: 32585, 32480, 6
 node: 32573, 32475, 6
 node: 32565, 32478, 6
+lua: Walker.SettingsChange("re walk delay", 800)
 stand: 32563, 32478, 6
 lua: if Self.ItemCount(3155) < 165 or Self.ItemCount(8309) < 190 then Walker.Goto("LeaveSpawn") end
 goto: SpawnLoop
@@ -152,9 +159,6 @@ node: 32563, 32531, 6
 wait: 500
 stand: 32564, 32534, 6
 stand: 32565, 32534, 6
-wait: 500
-lua: Self.Say("Utana Vid")
-wait: 500
 TravelNPCTalk2
 wait: 500
 node: 32575, 32533, 7
@@ -164,6 +168,9 @@ wait: 500
 say: bring me to port hope
 wait: 500
 lua: Walker.SettingsChange("re walk delay", 1300)
+wait: 250
+lua: Self.Say("Utana Vid")
+wait: 250
 node: 32803, 32689, 7
 node: 32784, 32691, 7
 node: 32755, 32696, 7
