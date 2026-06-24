@@ -121,7 +121,7 @@ wait: 500
 deposit items: {8402}, 8553, 3071, 8548, 7430, 3028
 wait: 500
 deposit items: {8403}, 8345
-withdraw
+WithdrawStars
 restart bps: 2854, 5801
 wait: 500
 lua: if Self.ItemCount(7368) < 300 then Walker.Enabled(false) Self.Logout() end
