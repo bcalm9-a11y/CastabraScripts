@@ -1,0 +1,175 @@
+ScriptStart
+HouseDeposit
+LeftOverSupplies
+lootbag: 32739, 32691, 6, 3155, 8309
+wait: 500
+restart bps: 2869
+DepositRashid
+lootbag: 32739, 32689, 6, 7430, 3342, 3386, 3360, 5741
+wait: 500
+restart bps: 2869
+DepositGreen
+lootbag: 32739, 32690, 6, 3370
+wait: 500
+restart bps: 2869
+DepositBlue
+lootbag: 32740, 32689, 6, 3392, 3029, 6499
+wait: 500
+restart bps: 2869
+node: 32746, 32697, 6
+wait: 500
+PickUpAmmo
+lua: _ammoLast = Self.ItemCount(3155)
+stand: 32740, 32690, 6
+wait: 300
+lua: Self.PickupItem(32741, 32690, 6, 7368, math.min(400 - Self.ItemCount(7368), 100))
+wait: 400
+lua: if Self.ItemCount(7368) <= _ammoLast then Walker.Enabled(false) Self.Logout() end
+goto: PickUpAmmo, item(7368) < 400
+wait: 500
+node: 32746, 32698, 6
+wait: 500
+PickUpManas
+lua: _mLast = Self.ItemCount(8309)
+lua: Self.PickupItem(32741, 32689, 6, 8309, math.min(600 - Self.ItemCount(8309), 100))
+wait: 400
+lua: if Self.ItemCount(8309) <= _mLast then Walker.Enabled(false) Self.Logout() end
+goto: PickUpManas, item(8309) < 600
+wait: 500
+restart bps: 2869
+LeaveHouse
+stand: 32744, 32697, 6
+wait: 500
+lua: Self.Say("Utana Vid")  
+node: 32770, 32697, 7
+node: 32792, 32695, 7
+TravelNPCTalk1
+node: 32809, 32687, 7
+stand: 32812, 32686, 7
+lua: if Self.DistanceFromPosition(32812, 32686, 7) > 2 then Walker.Goto("TravelNPCTalk1") end
+wait: 500
+say: Bring me to Venomir
+wait: 500
+node: 32576, 32532, 7
+node: 32567, 32534, 7
+stand: 32566, 32534, 7
+wait: 500
+stand: 32565, 32534, 7
+node: 32563, 32533, 6
+node: 32565, 32526, 6
+wait: 500
+stand: 32564, 32526, 6
+stand: 32564, 32525, 6
+wait: 500
+lua: if Self.ItemCount(7368) < 120 or Self.ItemCount(8309) < 150 then Walker.Goto("LeaveSpawn") end
+Tohunt
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32564, 32519, 7
+node: 32569, 32504, 7
+node: 32578, 32496, 7
+lua: Walker.SettingsChange("re walk delay", 800)
+stand: 32577, 32496, 7
+wait: 500
+stand: 32576, 32496, 7
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32571, 32492, 6
+node: 32563, 32492, 6
+node: 32549, 32490, 6
+node: 32551, 32500, 6
+stand: 32549, 32484, 6
+stand: 32547, 32483, 6
+wait: 2000
+node: 32554, 32477, 6
+stand: 32557, 32472, 6
+wait: 2000
+node: 32569, 32466, 6
+node: 32579, 32476, 6
+node: 32568, 32477, 6
+stand: 32565, 32478, 6
+lua: Walker.SettingsChange("re walk delay", 800)
+stand: 32563, 32478, 6
+lua: Self.EquipItem(SLOT_FEET, 7625, 1)
+SpawnLoop
+lua: if Self.ItemCount(7368) < 120 or Self.ItemCount(8309) < 150 then Walker.Goto("LeaveSpawn") end
+node: 32573, 32495, 6
+node: 32564, 32491, 6
+node: 32551, 32490, 6
+node: 32551, 32500, 6
+lua: if Self.ItemCount(7368) < 120 or Self.ItemCount(8309) < 150 then Walker.Goto("LeaveSpawn") end
+node: 32550, 32487, 6
+stand: 32549, 32484, 6
+stand: 32547, 32483, 6
+wait: 1000
+node: 32548, 32477, 6
+node: 32540, 32479, 6
+lua: if Self.ItemCount(7368) < 120 or Self.ItemCount(8309) < 150 then Walker.Goto("LeaveSpawn") end
+stand: 32537, 32483, 6
+node: 32527, 32484, 6
+node: 32521, 32474, 6
+node: 32511, 32471, 6
+lua: if Self.ItemCount(7368) < 120 or Self.ItemCount(8309) < 150 then Walker.Goto("LeaveSpawn") end
+node: 32521, 32477, 6
+stand: 32529, 32482, 6
+stand: 32530, 32481, 6
+node: 32534, 32467, 5
+node: 32544, 32467, 5
+node: 32533, 32476, 5
+stand: 32530, 32481, 5
+node: 32539, 32479, 6
+stand: 32547, 32475, 6
+wait: 2000
+node: 32549, 32482, 6
+lua: if Self.ItemCount(7368) < 120 or Self.ItemCount(8309) < 150 then Walker.Goto("LeaveSpawn") end
+stand: 32549, 32490, 6
+node: 32565, 32490, 6
+node: 32574, 32492, 6
+lua: if Self.ItemCount(7368) < 120 or Self.ItemCount(8309) < 150 then Walker.Goto("LeaveSpawn") end
+goto: SpawnLoop
+LeaveSpawn
+wait: 250
+lua: Self.EquipItem(SLOT_FEET, 3079, 1)
+node: 32575, 32496, 6
+wait: 500
+stand: 32575, 32496, 6
+stand: 32576, 32496, 6
+wait: 500
+lua: Walker.SettingsChange("re walk delay", 200)
+node: 32579, 32497, 7
+node: 32565, 32511, 7
+node: 32564, 32522, 7
+lua: Walker.SettingsChange("re walk delay", 800)
+wait: 500
+stand: 32564, 32524, 7
+stand: 32564, 32525, 7
+wait: 500
+node: 32563, 32531, 6
+wait: 500
+stand: 32564, 32534, 6
+stand: 32565, 32534, 6
+wait: 500
+node: 32575, 32533, 7
+wait: 1000
+lua: Self.Say("Utana Vid")
+wait: 1000
+stand: 32578, 32533, 7
+TravelNPCTalk2
+wait: 500
+stand: 32578, 32533, 7
+lua: if Self.DistanceFromPosition(32578, 32533, 7) > 2 then Walker.Goto("TravelNPCTalk2") end
+wait: 500
+say: bring me to port hope
+wait: 500
+lua: Walker.SettingsChange("re walk delay", 1300)
+wait: 250
+lua: Self.Say("Utana Vid")
+wait: 250
+node: 32803, 32689, 7
+node: 32784, 32691, 7
+node: 32755, 32696, 7
+stand: 32745, 32697, 7
+stand: 32744, 32697, 7
+ladder: 32744, 32697, 7
+stand: 32745, 32698, 6
+stand: 32740, 32690, 6
+ReachDepot
+goto: ScriptStart
