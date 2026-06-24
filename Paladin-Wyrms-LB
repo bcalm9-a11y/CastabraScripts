@@ -56,7 +56,7 @@ exura
 1
 4
 1
-1
+4
 4
 #### Shortkeys ####
 meuse 3160
@@ -77,8 +77,8 @@ turn 0
 step 0
 mousedrop 3031
 #### Skill Trainer ####
-1
-Wyrm
+4
+Grim Reaper
 0
 100
 7
@@ -88,7 +88,7 @@ Wyrm
 4
 4
 vip1,vip2
-1
+4
 
 
 
@@ -103,7 +103,7 @@ follow
 5
 4
 3155
-Withdraw-Stars,Paladin-Refill-Ammo,Paladin-Diag-Stand,Flee to DP Script,Main-Logout-Script
+Paladin-Diag-Stand
 4
 4
 8309
@@ -271,14 +271,14 @@ orc, troll
 3308
 500
 #### Magic Shooter ####
-target spell,exori con,1,1,100,70,{0-100},follow,wyrm
+target spell,exori con,1,1,100,70,{0-100},follow,grim reaper
 #### Settings II ####
 4
 3447
 9
 4
 3081
-1
+4
 200
 
 4
