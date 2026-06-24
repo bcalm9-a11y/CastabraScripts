@@ -1,0 +1,128 @@
+ScriptStart
+ToManas
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32331, 32835, 6
+node: 32339, 32836, 6
+node: 32343, 32835, 6
+lua: Walker.SettingsChange("re walk delay", 800)
+stand: 32343, 32832, 6
+stand: 32346, 32832, 7
+stand: 32344, 32827, 7
+stand: 32340, 32824, 7
+stand: 32340, 32820, 7
+node: 32340, 32812, 7
+RetryManaStand
+node: 32341, 32804, 7
+BuyManaFluids
+stand: 32345, 32805, 7
+BuyManaFluids
+goto: ToSpawn, item(8309) >= 600
+lua: local need = 500 - Self.ItemCount(8309); if need > 0 then local fits = math.floor((Self.Capity() - 50) / 1.80); local n = math.min(need, fits); if n > 0 then Self.Say("instant buy " .. n .. " mana fluid") end end
+wait: 1000
+lua: if Self.ItemCount(8309) < 500 then Self.Logout() end
+RetryManaStand
+lua: if Self.DistanceFromPosition(32345, 32805, 7) > 2 then Walker.Goto("RetryManaStand") end
+ToSpawn
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32345, 32803, 7
+node: 32358, 32802, 7
+node: 32369, 32809, 7
+node: 32372, 32819, 7
+lua: Walker.SettingsChange("re walk delay", 800)
+stand: 32372, 32821, 7
+node: 32372, 32831, 7
+stand: 32371, 32833, 7
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32371, 32839, 7
+node: 32379, 32837, 7
+node: 32386, 32839, 7
+lua: Walker.SettingsChange("re walk delay", 800)
+stand: 32388, 32841, 7
+node: 32388, 32844, 8
+stand: 32388, 32848, 8
+SpawnLoop
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32388, 32851, 9
+lua: if Self.ItemCount(7368) < 125 or Self.ItemCount(8309) < 125 then Walker.Goto("SafeLeave") end
+node: 32383, 32858, 9
+node: 32373, 32850, 9
+goto: SafeLeave, item(8309) <= 100
+node: 32362, 32855, 9
+lua: if Self.ItemCount(7368) < 125 or Self.ItemCount(8309) < 125 then Walker.Goto("SafeLeave") end
+node: 32362, 32848, 9
+node: 32371, 32851, 9
+node: 32380, 32847, 9lua: Walker.SettingsChange("re walk delay", 1300)
+stand: 32380, 32842, 9
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32383, 32837, 9
+lua: if Self.ItemCount(7368) < 125 or Self.ItemCount(8309) < 125 then Walker.Goto("SafeLeave") end
+node: 32384, 32837, 9
+node: 32392, 32836, 9
+lua: Walker.SettingsChange("re walk delay", 800)
+stand: 32394, 32836, 9
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32396, 32840, 9
+lua: if Self.ItemCount(7368) < 125 or Self.ItemCount(8309) < 125 then Walker.Goto("SafeLeave") end
+node: 32404, 32838, 9
+lua: Walker.SettingsChange("re walk delay", 800)
+stand: 32412, 32839, 9
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32416, 32839, 9
+lua: if Self.ItemCount(7368) < 125 or Self.ItemCount(8309) < 125 then Walker.Goto("SafeLeave") end
+node: 32423, 32837, 9
+node: 32427, 32828, 9
+lua: Walker.SettingsChange("re walk delay", 800)
+stand: 32433, 32823, 9
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32442, 32825, 9
+node: 32443, 32835, 9
+node: 32445, 32843, 9
+lua: if Self.ItemCount(7368) < 125 or Self.ItemCount(8309) < 125 then Walker.Goto("SafeLeave") end
+node: 32445, 32850, 9
+node: 32435, 32851, 9
+lua: Walker.SettingsChange("re walk delay", 800)
+stand: 32428, 32851, 9
+lua: Walker.SettingsChange("re walk delay", 100)
+node: 32419, 32849, 9
+node: 32411, 32858, 9
+lua: Walker.SettingsChange("re walk delay", 800)
+stand: 32407, 32858, 9
+lua: if Self.ItemCount(7368) < 125 or Self.ItemCount(8309) < 125 then Walker.Goto("SafeLeave") end
+stand: 32404, 32858, 9
+SafeLeave
+lua: if FLEEING then Walker.Goto("ToTown") end
+node: 32396, 32855, 9
+goto: SpawnLoop
+ToTown
+stand: 32389, 32848, 9
+node: 32388, 32844, 8
+stand: 32388, 32841, 8
+lua: Walker.SettingsChange("re walk delay", 800)
+node: 32386, 32838, 7
+stand: 32382, 32837, 7
+stand: 32379, 32837, 7
+stand: 32374, 32839, 7
+stand: 32370, 32838, 7
+stand: 32366, 32834, 7
+stand: 32361, 32836, 7
+node: 32355, 32837, 7
+stand: 32354, 32837, 7
+node: 32349, 32837, 7
+stand: 32346, 32838, 7
+stand: 32343, 32838, 7
+node: 32339, 32837, 6
+ArrivedatDepot
+stand: 32330, 32835, 6
+lua: if FLEEING then Walker.Enabled(false) Self.Logout() end
+restart bps: 2854, 5801
+wait: 500
+reach depot:
+wait: 500
+deposit items: {8402}, 8553, 3071, 8548, 7430, 3028
+wait: 500
+deposit items: {8403}, 8345
+withdraw
+restart bps: 2854, 5801
+wait: 500
+lua: if Self.ItemCount(7368) < 300 then Walker.Enabled(false) Self.Logout() end
+goto: ScriptStart
