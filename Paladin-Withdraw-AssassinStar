@@ -1,10 +1,11 @@
 --[[
     Script Name:        [on label] Withdraw assassin stars from depot inbox
     Description:        When character in walker reaches label "withdraw", it will check how many assassin stars are already in the backpack and withdraw only enough to reach the configured total from an open depot inbox.
+    Author:             Modified by ChatGPT
 ]]
 
 local config = {
-    label_name = "withdraw",                -- do this action on this current label in walker.
+    label_name = "WithdrawStars",                -- do this action on this current label in walker.
     depot_id = 8403,                        -- ID of the open depot inbox.
     container_index = 0,                    -- index of backpack to withdraw into (0 = main backpack).
     amount = 300,                           -- total desired amount of assassin stars in backpack after withdrawal
